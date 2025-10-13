@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const bookingSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
-    idProof: { type: String },
-    userPhoto: { type: String },
+    idProof: { data: Buffer, contentType: String },
+    userPhoto: { data: Buffer, contentType: String },
     contact: { type: String, required: true },
     address: { type: String },
     emergencyContact: { type: String },

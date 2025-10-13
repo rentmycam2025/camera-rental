@@ -4,7 +4,9 @@ const Booking = require("../models/Booking");
 const Camera = require("../models/Camera");
 const Accessory = require("../models/Accessory");
 const nodemailer = require("nodemailer");
-
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 // Email transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -67,87 +69,103 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST create booking
-router.post("/", async (req, res) => {
-  try {
-    const {
-      fullName,
-      idProof,
-      userPhoto,
-      contact,
-      address,
-      emergencyContact,
-      cameras,
-      accessories,
-      rentalPeriod,
-    } = req.body;
+router.post(
+  "/",
+  upload.fields([
+    { name: "idProof", maxCount: 1 },
+    { name: "userPhoto", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const {
+        fullName,
+        contact,
+        address,
+        emergencyContact,
+        cameras,
+        accessories,
+        rentalPeriod,
+      } = req.body;
 
-    const booking = new Booking({
-      fullName,
-      idProof,
-      userPhoto,
-      contact,
-      address,
-      emergencyContact,
-      cameras,
-      accessories,
-      rentalPeriod,
-      status: "Pending",
-    });
+      const booking = new Booking({
+        fullName,
+        contact,
+        address,
+        emergencyContact,
+        rentalPeriod,
+        cameras,
+        accessories,
+        status: "Pending",
+        idProof: req.files.idProof
+          ? {
+              data: req.files.idProof[0].buffer,
+              contentType: req.files.idProof[0].mimetype,
+            }
+          : undefined,
+        userPhoto: req.files.userPhoto
+          ? {
+              data: req.files.userPhoto[0].buffer,
+              contentType: req.files.userPhoto[0].mimetype,
+            }
+          : undefined,
+      });
 
-    await booking.save();
+      await booking.save();
 
-    // Correct populate after save
-    await booking.populate("cameras accessories");
+      // Populate camera and accessory details
+      await booking.populate("cameras accessories");
 
-    // Calculate total amount
-    const totalAmount =
-      booking.cameras.reduce(
-        (sum, c) => sum + (c.offerPrice || c.pricePerDay),
-        0
-      ) +
-      booking.accessories.reduce(
-        (sum, a) => sum + (a.offerPrice || a.pricePerDay),
-        0
-      );
+      // Calculate total amount
+      const totalAmount =
+        booking.cameras.reduce(
+          (sum, c) => sum + (c.offerPrice || c.pricePerDay),
+          0
+        ) +
+        booking.accessories.reduce(
+          (sum, a) => sum + (a.offerPrice || a.pricePerDay),
+          0
+        );
 
-    booking.totalAmount = totalAmount;
-    booking.paymentLink = "https://yourpaymentlink.com/pay/12345"; // Replace with real link
+      booking.totalAmount = totalAmount;
+      booking.paymentLink = "https://yourpaymentlink.com/pay/12345"; // Replace with real link
 
-    // Send email to admin
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
-      subject: `New Booking Received - ${booking.fullName}`,
-      html: `
-        <h3>New booking received!</h3>
-        <p><strong>Name:</strong> ${booking.fullName}</p>
-        <p><strong>Rental Period:</strong> ${booking.rentalPeriod}</p>
-        <p><strong>Cameras:</strong> ${booking.cameras
-          .map((c) => `${c.name} - ₹${c.offerPrice || c.pricePerDay}/day`)
-          .join(", ")}</p>
-        <p><strong>Accessories:</strong> ${booking.accessories
-          .map((a) => `${a.name} - ₹${a.offerPrice || a.pricePerDay}/day`)
-          .join(", ")}</p>
-        <p><strong>Total:</strong> ₹${booking.totalAmount}</p>
-        <p><strong>Contact:</strong> ${booking.contact}</p>
-        <p><strong>Address:</strong> ${booking.address}</p>
-        <p><a href="${generateWhatsAppLink(
-          booking.contact,
-          booking
-        )}" target="_blank">Send WhatsApp Confirmation</a></p>
-      `,
-    };
+      // Send email to admin
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.ADMIN_EMAIL,
+        subject: `New Booking Received - ${booking.fullName}`,
+        html: `
+          <h3>New booking received!</h3>
+          <p><strong>Name:</strong> ${booking.fullName}</p>
+          <p><strong>Rental Period:</strong> ${booking.rentalPeriod}</p>
+          <p><strong>Cameras:</strong> ${booking.cameras
+            .map((c) => `${c.name} - ₹${c.offerPrice || c.pricePerDay}/day`)
+            .join(", ")}</p>
+          <p><strong>Accessories:</strong> ${booking.accessories
+            .map((a) => `${a.name} - ₹${a.offerPrice || a.pricePerDay}/day`)
+            .join(", ")}</p>
+          <p><strong>Total:</strong> ₹${booking.totalAmount}</p>
+          <p><strong>Contact:</strong> ${booking.contact}</p>
+          <p><strong>Address:</strong> ${booking.address}</p>
+          <p><a href="${generateWhatsAppLink(
+            booking.contact,
+            booking
+          )}" target="_blank">Send WhatsApp Confirmation</a></p>
+        `,
+      };
 
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) console.log("Error sending email:", err);
-      else console.log("Admin email sent:", info.response);
-    });
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) console.log("Error sending email:", err);
+        else console.log("Admin email sent:", info.response);
+      });
 
-    res.status(201).json(booking);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+      res.status(201).json(booking);
+    } catch (err) {
+      console.error("Booking creation error:", err);
+      res.status(400).json({ message: err.message });
+    }
   }
-});
+);
 
 // PUT update booking
 router.put("/:id", async (req, res) => {
