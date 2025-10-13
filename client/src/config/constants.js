@@ -76,7 +76,7 @@ export const NAV_CONFIG = {
 
 // API Configuration
 export const API_CONFIG = {
-  baseURL: "https://camera-rental-api-vesq.onrender.com/api",
+  baseURL: "http://localhost:5000/api",
   endpoints: {
     cameras: "/cameras",
     accessories: "/accessories",

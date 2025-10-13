@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { createBooking } from "../api";
 import { BRAND_CONFIG } from "../config/constants";
 
@@ -11,6 +13,8 @@ const BookingForm = ({
   rentalDates,
   subtotal,
 }) => {
+  const navigate = useNavigate();
+
   const [submissionDetails, setSubmissionDetails] = useState(null);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -379,13 +383,13 @@ const BookingForm = ({
                   htmlFor="idProof"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  ID Proof (Required) - JPG, PNG, PDF
+                  ID Proof (Required) - JPG, PNG
                 </label>
                 <input
                   type="file"
                   id="idProof"
                   name="idProof"
-                  accept=".jpg,.jpeg,.png,.pdf"
+                  accept=".jpg,.jpeg,.png"
                   onChange={handleFileChange}
                   className={`w-full border p-3 rounded-lg bg-gray-50 text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-100 file:text-primary-700 hover:file:bg-primary-200 ${
                     formErrors.idProof ? "border-red-500" : "border-gray-300"
@@ -700,6 +704,7 @@ const BookingForm = ({
                 onClick={() => {
                   clearCart();
                   setActivePage("home");
+                  navigate("/");
                 }}
                 className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-all"
               >
@@ -709,6 +714,7 @@ const BookingForm = ({
                 onClick={() => {
                   clearCart();
                   setActivePage("cameras");
+                  navigate("/cameras");
                 }}
                 className="border border-gray-300 hover:border-primary-400 hover:text-primary-600 px-8 py-3 rounded-lg font-semibold transition-all text-gray-700"
               >

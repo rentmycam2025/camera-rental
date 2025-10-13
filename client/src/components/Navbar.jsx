@@ -119,7 +119,7 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
               <img
                 src={BRAND_CONFIG.logo}
                 alt={BRAND_CONFIG.name}
-                className="h-14 w-auto"
+                className="h-8 w-auto"
               />
             </button>
           </Link>
@@ -253,7 +253,7 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
               <img
                 src={BRAND_CONFIG.logo}
                 alt={BRAND_CONFIG.name}
-                className="h-14 w-auto"
+                className="h-8 w-auto"
               />
             </button>
           </Link>
