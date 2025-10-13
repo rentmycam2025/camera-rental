@@ -3,15 +3,29 @@ const mongoose = require("mongoose");
 const bookingSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
-    idProof: { data: Buffer, contentType: String },
-    userPhoto: { data: Buffer, contentType: String },
+    email: { type: String, required: true },
     contact: { type: String, required: true },
-    address: { type: String },
-    emergencyContact: { type: String },
-    cameras: [{ type: mongoose.Schema.Types.ObjectId, ref: "Camera" }],
-    accessories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Accessory" }],
+    address: { type: String, required: true },
+    emergencyContact: { type: String, required: true },
+    idProof: {
+      data: { type: Buffer, required: true },
+      contentType: { type: String, required: true },
+    },
+    userPhoto: {
+      data: { type: Buffer, required: true },
+      contentType: { type: String, required: true },
+    },
+    cameras: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Camera", required: true },
+    ],
+    accessories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Accessory",
+        required: true,
+      },
+    ],
     rentalPeriod: { type: String, required: true },
-    status: { type: String, default: "Pending" }, // "Pending", "Confirmed", "Completed"
   },
   { timestamps: true }
 );
