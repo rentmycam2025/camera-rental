@@ -75,8 +75,8 @@ export const NAV_CONFIG = {
 };
 
 // API Configuration
-const baseURL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+// const baseURL = "http://localhost:5000/api";
+const baseURL = "https://camera-rental-api-vesq.onrender.com/api";
 
 export const API_CONFIG = {
   baseURL: baseURL,
