@@ -75,8 +75,11 @@ export const NAV_CONFIG = {
 };
 
 // API Configuration
+const baseURL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+
 export const API_CONFIG = {
-  baseURL: "http://localhost:5000/api",
+  baseURL: baseURL,
   endpoints: {
     cameras: "/cameras",
     accessories: "/accessories",
