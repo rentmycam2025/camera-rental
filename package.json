@@ -9,7 +9,6 @@
     "gpushs": "git add server && git commit -m \"Quick commit\" && git push origin main"
   },
   "repository": {
-    "type": "git",
     "url": "git+https://github.com/rentmycam2025/camera-rental.git"
   },
   "keywords": [],
