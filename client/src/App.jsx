@@ -1,3 +1,4 @@
+// App.jsx - Updated to hide Navbar and Footer on admin routes
 import React, { useState, useCallback, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -7,6 +8,9 @@ import {
   useLocation,
 } from "react-router-dom";
 
+// Context
+import { AuthProvider, useAuth } from "./context/AuthContext";
+
 // Hooks
 import { useApi } from "./hooks/useApi";
 import { useCart } from "./hooks/useCart";
@@ -15,6 +19,7 @@ import { useCart } from "./hooks/useCart";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Notification from "./components/Notification";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import Home from "./pages/Home";
@@ -23,16 +28,25 @@ import AccessoryList from "./pages/AccessoryList";
 import ProductDetail from "./pages/ProductDetail";
 import CartPage from "./pages/Cart";
 import BookingForm from "./pages/BookingForm";
-// import ContactPage from "./pages/ContactPage";
 
-// Router Wrapper Component to maintain existing state logic
+// Admin Pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminCameras from "./pages/admin/AdminCameras";
+import AdminAccessories from "./pages/admin/AdminAccessories";
+
+// Router Wrapper Component
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [notification, setNotification] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [activePage, setActivePage] = useState("home");
+
+  // Check if current route is an admin route
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   // Data fetching hook
   const { cameraList, accessoryList, isLoading } = useApi(setNotification);
@@ -72,12 +86,8 @@ function AppContent() {
     (item) => {
       console.log("Search selected item:", item);
       setSelectedItem(item);
-
-      // Navigate to product detail page
       navigate("/product", { state: { item } });
       setActivePage("detail");
-
-      // Show notification
       setNotification({
         message: `Navigating to ${item.name}`,
         type: "success",
@@ -94,8 +104,11 @@ function AppContent() {
     else if (path === "/accessories") setActivePage("accessories");
     else if (path === "/cart") setActivePage("cart");
     else if (path === "/booking") setActivePage("booking");
-    else if (path === "/contact") setActivePage("contact");
     else if (path === "/product") setActivePage("detail");
+    else if (path === "/admin/login") setActivePage("admin-login");
+    else if (path === "/admin/dashboard") setActivePage("admin-dashboard");
+    else if (path === "/admin/cameras") setActivePage("admin-cameras");
+    else if (path === "/admin/accessories") setActivePage("admin-accessories");
   }, [location.pathname]);
 
   // Handler for page navigation
@@ -118,8 +131,17 @@ function AppContent() {
         case "booking":
           navigate("/booking");
           break;
-        case "contact":
-          navigate("/contact");
+        case "admin-login":
+          navigate("/admin/login");
+          break;
+        case "admin-dashboard":
+          navigate("/admin/dashboard");
+          break;
+        case "admin-cameras":
+          navigate("/admin/cameras");
+          break;
+        case "admin-accessories":
+          navigate("/admin/accessories");
           break;
         default:
           navigate("/");
@@ -130,16 +152,22 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
-      <Navbar
-        activePage={activePage}
-        setActivePage={handlePageChange}
-        cartCount={cartCount}
-        onSearchSelect={handleSearchSelect}
-        cameraList={cameraList}
-        accessoryList={accessoryList}
-      />
+      {/* Conditionally render Navbar - hide on admin routes */}
+      {!isAdminRoute && (
+        <Navbar
+          activePage={activePage}
+          setActivePage={handlePageChange}
+          cartCount={cartCount}
+          onSearchSelect={handleSearchSelect}
+          cameraList={cameraList}
+          accessoryList={accessoryList}
+          user={user}
+        />
+      )}
+
       <main className="flex-grow">
         <Routes>
+          {/* Public Routes */}
           <Route
             path="/"
             element={
@@ -214,10 +242,65 @@ function AppContent() {
               />
             }
           />
-          {/* <Route path="/contact" element={<ContactPage setActivePage={setActivePage} />} /> */}
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin/login"
+            element={
+              <AdminLogin
+                setNotification={setNotification}
+                setActivePage={setActivePage}
+              />
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute
+                setNotification={setNotification}
+                setActivePage={setActivePage}
+              >
+                <AdminDashboard
+                  setNotification={setNotification}
+                  setActivePage={setActivePage}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/cameras"
+            element={
+              <ProtectedRoute
+                setNotification={setNotification}
+                setActivePage={setActivePage}
+              >
+                <AdminCameras
+                  setNotification={setNotification}
+                  setActivePage={setActivePage}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/accessories"
+            element={
+              <ProtectedRoute
+                setNotification={setNotification}
+                setActivePage={setActivePage}
+              >
+                <AdminAccessories
+                  setNotification={setNotification}
+                  setActivePage={setActivePage}
+                />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
-      <Footer />
+
+      {/* Conditionally render Footer - hide on admin routes */}
+      {!isAdminRoute && <Footer />}
+
       {notification && (
         <Notification
           message={notification.message}
@@ -229,11 +312,13 @@ function AppContent() {
   );
 }
 
-// Main App component with Router
+// Main App component with Router and AuthProvider
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }

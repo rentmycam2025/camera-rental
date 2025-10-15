@@ -9,7 +9,7 @@ const cameraSchema = new mongoose.Schema(
     image: { type: String },
     category: { type: String, default: "camera", enum: ["camera"] }, // Fixed category
     inclusions: [{ type: String }],
-    specs: { type: Map, of: String },
+    specs: [{ type: String }],
   },
   { timestamps: true }
 );

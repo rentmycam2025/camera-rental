@@ -1,9 +1,17 @@
 // utils/emailUtils.js
+require("dotenv").config();
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const {
   calculateBookingTotal,
   generateDetailedWhatsAppMessage,
 } = require("./bookingUtils");
+
+// Initialize Brevo API client
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 const generateWhatsAppLink = (contact, booking) => {
   const message = generateDetailedWhatsAppMessage(booking);
@@ -206,63 +214,59 @@ const prepareEmailAttachments = (files) => {
 
   if (files?.idProof) {
     attachments.push({
-      filename: files.idProof[0].originalname,
-      content: files.idProof[0].buffer,
-      contentType: files.idProof[0].mimetype,
-      cid: "idProofImage",
+      name: files.idProof[0].originalname,
+      content: files.idProof[0].buffer.toString("base64"),
+      contentId: "idProofImage", // CID for inline image reference
     });
   }
 
   if (files?.userPhoto) {
     attachments.push({
-      filename: files.userPhoto[0].originalname,
-      content: files.userPhoto[0].buffer,
-      contentType: files.userPhoto[0].mimetype,
-      cid: "userPhotoImage",
+      name: files.userPhoto[0].originalname,
+      content: files.userPhoto[0].buffer.toString("base64"),
+      contentId: "userPhotoImage", // CID for inline image reference
     });
   }
 
   return attachments;
 };
 
-const sendBookingEmail = async (transporter, booking, files) => {
+const sendBookingEmail = async (booking, files) => {
   try {
     const emailTemplate = generateBookingEmailTemplate(booking, files);
     const attachments = prepareEmailAttachments(files);
 
-    const mailOptions = {
-      from: `"${process.env.BRAND_NAME || "Rent My Cam"}" <${
-        process.env.EMAIL_USER
-      }>`,
-      to: process.env.ADMIN_EMAIL,
+    const sendSmtpEmail = {
+      sender: {
+        name: process.env.BRAND_NAME || "Rent My Cam",
+        email: process.env.EMAIL_USER,
+      },
+      to: [
+        {
+          email: process.env.ADMIN_EMAIL,
+          name: "Admin",
+        },
+      ],
       subject: emailTemplate.subject,
-      html: emailTemplate.html,
-      attachments: attachments,
+      htmlContent: emailTemplate.html,
+      attachment: attachments,
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Admin email sent successfully:", info.response);
+    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("Admin email sent successfully via Brevo:", data);
     return true;
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email via Brevo:", error);
     throw error;
   }
 };
 
 // Customer confirmation email with similar design
-const sendCustomerConfirmationEmail = async (transporter, booking) => {
+const sendCustomerConfirmationEmail = async (booking) => {
   try {
     const { totalAmount } = calculateBookingTotal(booking);
 
-    const mailOptions = {
-      from: `"${process.env.BRAND_NAME || "Rent My Cam"}" <${
-        process.env.EMAIL_USER
-      }>`,
-      to: booking.email,
-      subject: `Booking Confirmation - ${
-        process.env.BRAND_NAME || "Our Company"
-      }`,
-      html: `<!DOCTYPE html>
+    const emailHtml = `<!DOCTYPE html>
                 <html lang="en">
                 <head>
                 <meta charset="UTF-8">
@@ -456,20 +460,39 @@ const sendCustomerConfirmationEmail = async (transporter, booking) => {
 
                     <!-- Footer -->
                     <div class="footer">© ${new Date().getFullYear()} ${
-        process.env.BRAND_NAME || "Your Company"
-      }. All rights reserved.</div>
+      process.env.BRAND_NAME || "Your Company"
+    }. All rights reserved.</div>
 
                 </div>
                 </body>
                 </html>
-                `,
+                `;
+
+    const sendSmtpEmail = {
+      sender: {
+        name: process.env.BRAND_NAME || "Rent My Cam",
+        email: process.env.EMAIL_USER,
+      },
+      to: [
+        {
+          email: booking.email,
+          name: booking.fullName,
+        },
+      ],
+      subject: `Booking Confirmation - ${
+        process.env.BRAND_NAME || "Our Company"
+      }`,
+      htmlContent: emailHtml,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("Customer confirmation email sent successfully");
+    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log(
+      "Customer confirmation email sent successfully via Brevo:",
+      data
+    );
     return true;
   } catch (error) {
-    console.error("Error sending customer email:", error);
+    console.error("Error sending customer email via Brevo:", error);
     throw error;
   }
 };

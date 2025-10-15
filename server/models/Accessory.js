@@ -8,7 +8,8 @@ const accessorySchema = new mongoose.Schema(
     description: { type: String },
     image: { type: String },
     category: { type: String, default: "accessory", enum: ["accessory"] }, // Fixed category
-    specs: { type: Map, of: String },
+    inclusions: [{ type: String }],
+    specs: [{ type: String }],
   },
   { timestamps: true }
 );

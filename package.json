@@ -1,0 +1,21 @@
+{
+  "name": "camera-rental",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gpush": "git add . && git commit -m \"$npm_config_msg\" && git push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rentmycam2025/camera-rental.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rentmycam2025/camera-rental/issues"
+  },
+  "homepage": "https://github.com/rentmycam2025/camera-rental#readme",
+  "description": ""
+}

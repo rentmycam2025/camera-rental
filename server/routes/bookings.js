@@ -16,15 +16,15 @@ const {
   generateDetailedWhatsAppMessage,
 } = require("../utils/bookingUtils");
 
-// Email transporter configuration
-const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// // Email transporter configuration
+// const nodemailer = require("nodemailer");
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 // GET all bookings
 router.get("/", async (req, res) => {
@@ -100,13 +100,12 @@ router.post(
         total: booking.totalAmount,
       });
 
-      // Send email notifications (non-blocking)
-      sendBookingEmail(transporter, booking, req.files).catch((err) =>
+      // Send email notifications (non-blocking) via Brevo API
+      sendBookingEmail(booking, req.files).catch((err) =>
         console.error("Admin email sending failed:", err)
       );
 
-      // Send customer confirmation email
-      sendCustomerConfirmationEmail(transporter, booking).catch((err) =>
+      sendCustomerConfirmationEmail(booking).catch((err) =>
         console.error("Customer email sending failed:", err)
       );
 
@@ -140,8 +139,13 @@ router.put("/:id", async (req, res) => {
       });
 
     // Send confirmation email if status changed to "Confirmed"
+    // if (req.body.status === "Confirmed") {
+    //   sendCustomerConfirmationEmail(transporter, booking).catch((err) =>
+    //     console.error("Confirmation email sending failed:", err)
+    //   );
+    // }
     if (req.body.status === "Confirmed") {
-      sendCustomerConfirmationEmail(transporter, booking).catch((err) =>
+      sendCustomerConfirmationEmail(booking).catch((err) =>
         console.error("Confirmation email sending failed:", err)
       );
     }

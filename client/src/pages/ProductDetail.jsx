@@ -223,12 +223,19 @@ const ProductDetail = ({ item, setActivePage, addToCart }) => {
                     key={index}
                     className="flex items-start text-sm md:text-base"
                   >
-                    <span className="text-slate-400 font-bold mr-2 mt-0.5 flex-shrink-0 text-base md:text-lg leading-none">
-                      &bull;
-                    </span>
-                    <span className="font-semibold text-slate-900">
-                      {spec.key}:
-                    </span>
+                    <svg
+                      className="w-4 h-4 mr-2 mt-1 text-primary-600 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                     <span className="ml-1 font-normal text-slate-700">
                       {spec.value}
                     </span>
