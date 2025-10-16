@@ -14,7 +14,7 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
-// ✅ Allowed origins from .env
+// Allowed origins from .env
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : [];
