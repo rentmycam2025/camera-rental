@@ -1,4 +1,4 @@
-// api.js - Update with complete CRUD operations
+// api.js - Clean version without admin operations
 import axios from "axios";
 import { API_CONFIG } from "./config/constants";
 
@@ -7,7 +7,16 @@ const api = axios.create({
   timeout: API_CONFIG.timeout,
 });
 
-// Camera CRUD operations
+// Add API key header to every request
+api.interceptors.request.use(
+  (config) => {
+    config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Camera operations
 export const getCameras = async () => {
   try {
     const response = await api.get(API_CONFIG.endpoints.cameras);
@@ -28,40 +37,7 @@ export const getCameraById = async (id) => {
   }
 };
 
-export const createCamera = async (data) => {
-  try {
-    const response = await api.post(API_CONFIG.endpoints.cameras, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating camera:", error);
-    throw error;
-  }
-};
-
-export const updateCamera = async (id, data) => {
-  try {
-    const response = await api.put(
-      `${API_CONFIG.endpoints.cameras}/${id}`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error updating camera:", error);
-    throw error;
-  }
-};
-
-export const deleteCamera = async (id) => {
-  try {
-    const response = await api.delete(`${API_CONFIG.endpoints.cameras}/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting camera:", error);
-    throw error;
-  }
-};
-
-// Accessory CRUD operations
+// Accessory operations
 export const getAccessories = async () => {
   try {
     const response = await api.get(API_CONFIG.endpoints.accessories);
@@ -78,41 +54,6 @@ export const getAccessoryById = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching accessory:", error);
-    throw error;
-  }
-};
-
-export const createAccessory = async (data) => {
-  try {
-    const response = await api.post(API_CONFIG.endpoints.accessories, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating accessory:", error);
-    throw error;
-  }
-};
-
-export const updateAccessory = async (id, data) => {
-  try {
-    const response = await api.put(
-      `${API_CONFIG.endpoints.accessories}/${id}`,
-      data
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error updating accessory:", error);
-    throw error;
-  }
-};
-
-export const deleteAccessory = async (id) => {
-  try {
-    const response = await api.delete(
-      `${API_CONFIG.endpoints.accessories}/${id}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting accessory:", error);
     throw error;
   }
 };
@@ -137,25 +78,3 @@ export const getBookings = async () => {
     throw error;
   }
 };
-export const adminLogin = async (email, password) => {
-  try {
-    const response = await api.post("/auth/login", { email, password });
-    return response.data;
-  } catch (error) {
-    console.error("Error during admin login:", error);
-    throw error;
-  }
-};
-// Add Authorization header to every request if token exists
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("adminToken");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-
-    // Add API key header
-    config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);

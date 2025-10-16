@@ -17,9 +17,6 @@ export const useApi = (setNotification) => {
         const cameras = await getCameras();
         const accessories = await getAccessories();
 
-        console.log("Cameras response:", cameras);
-        console.log("Accessories response:", accessories);
-
         // Ensure we have arrays
         setCameraList(Array.isArray(cameras) ? cameras : []);
         setAccessoryList(Array.isArray(accessories) ? accessories : []);
