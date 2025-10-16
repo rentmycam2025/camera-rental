@@ -1,3 +1,4 @@
+import { BRAND_CONFIG } from "../config/constants";
 import {
   FiSearch,
   FiStar,
@@ -14,6 +15,8 @@ import {
   FiClock,
   FiMail,
 } from "react-icons/fi";
+
+const { social } = BRAND_CONFIG;
 
 export const howItWorksSteps = [
   {
@@ -65,10 +68,10 @@ export const reviews = [
 ];
 
 export const socialMedia = [
-  { name: "YouTube", icon: FiYoutube, url: "#" },
-  { name: "Instagram", icon: FiInstagram, url: "#" },
-  { name: "Facebook", icon: FiFacebook, url: "#" },
-  { name: "Twitter", icon: FiTwitter, url: "#" },
+  { name: "YouTube", icon: FiYoutube, url: social.youtube || "#" },
+  { name: "Instagram", icon: FiInstagram, url: social.instagram || "#" },
+  { name: "Facebook", icon: FiFacebook, url: social.facebook || "#" },
+  { name: "Twitter", icon: FiTwitter, url: social.twitter || "#" },
 ];
 
 export const stats = [

@@ -197,7 +197,7 @@ const Home = ({
       <section className="bg-gray-50 py-16">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-5 text-gray-900 animate-on-scroll">
-            Why Rent MY Cam is Your Best Choice
+            Why {BRAND_CONFIG.name} is Your Best Choice
           </h2>
 
           {/* Rental Process */}
@@ -363,21 +363,23 @@ const Home = ({
               Visit Our Location
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="aspect-video bg-gray-100 rounded-lg mb-6 flex items-center justify-center border border-gray-300">
-                <div className="text-center text-gray-400">
-                  <FiMapPin
-                    size={40}
-                    className="text-primary-500 mx-auto mb-2"
-                  />
-                  <p className="font-medium text-lg mb-1">
-                    Interactive Map Placeholder
-                  </p>
-                </div>
+              <div className="aspect-video bg-gray-100 rounded-lg mb-6 flex items-center justify-center border border-gray-300 overflow-hidden">
+                <iframe
+                  title={BRAND_CONFIG.name}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.967116434641!2d77.59456231526332!3d12.971598590857246!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670f4fdf2d7%3A0x4c1d5d81c02e0c!2sBangalore%2C%20Karnataka%2C%20India!5e0!3m2!1sen!2sus!4v1696980623456!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  className="border-0"
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
+
               <div className="flex flex-col justify-center">
                 <div className="text-gray-900 space-y-3">
                   <p className="font-extrabold text-2xl text-primary-500">
-                    Rent MY Cam
+                    {BRAND_CONFIG.name}
                   </p>
                   <p className="flex items-start text-lg text-gray-700">
                     <FiMapPin className="mr-3 w-5 h-5 mt-1 flex-shrink-0 text-primary-500" />

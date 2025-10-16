@@ -7,6 +7,10 @@ import {
   deleteCamera,
 } from "../../api";
 import { useNavigate } from "react-router-dom";
+import AdminHeader from "../../components/AdminHeader";
+
+const DEFAULT_IMAGE =
+  "https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760359879/placeholder_logo_z6ko7r.png";
 
 const AdminCameras = ({ setNotification, setActivePage }) => {
   const navigate = useNavigate();
@@ -86,7 +90,7 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
           ? Number(formData.offerPrice)
           : undefined,
         description: formData.description,
-        image: formData.image,
+        image: formData.image?.trim() || DEFAULT_IMAGE,
         inclusions: formData.inclusions
           .split(",")
           .map((item) => item.trim())
@@ -147,15 +151,17 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <AdminHeader />
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-8">
         {/* Header with Back Navigation */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center">
               <button
                 onClick={() => navigate("/admin/dashboard")}
-                className="mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="mr-3 sm:mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -172,10 +178,10 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                 </svg>
               </button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                   Manage Cameras
                 </h1>
-                <p className="mt-2 text-gray-600">
+                <p className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
                   Add, edit, or remove camera listings
                 </p>
               </div>
@@ -183,10 +189,10 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
             <button
               onClick={() => setShowForm(true)}
               disabled={loading}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 w-full sm:w-auto"
             >
               <svg
-                className="w-5 h-5 mr-2"
+                className="w-4 h-4 sm:w-5 sm:h-5 mr-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -205,19 +211,19 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
 
         {/* Camera Form Modal */}
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
+            <div className="bg-white rounded-lg w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+              <div className="p-4 sm:p-6">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
                     {editingCamera ? "Edit Camera" : "Add New Camera"}
                   </h2>
                   <button
                     onClick={resetForm}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 p-1"
                   >
                     <svg
-                      className="w-6 h-6"
+                      className="w-5 h-5 sm:w-6 sm:h-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -232,8 +238,11 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 gap-6">
+                <form
+                  onSubmit={handleSubmit}
+                  className="space-y-4 sm:space-y-6"
+                >
+                  <div className="grid grid-cols-1 gap-4 sm:gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Camera Name *
@@ -244,12 +253,12 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                         placeholder="e.g., Canon EOS R5"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
                           Price Per Day (₹) *
@@ -261,8 +270,8 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                           onChange={handleInputChange}
                           required
                           min="0"
-                          step="10"
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                          step="5"
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                           placeholder="e.g., 1500"
                         />
                       </div>
@@ -277,8 +286,8 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                           value={formData.offerPrice}
                           onChange={handleInputChange}
                           min="0"
-                          step="10"
-                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                          step="5"
+                          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                           placeholder="e.g., 1000"
                         />
                       </div>
@@ -293,7 +302,7 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows={3}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                         placeholder="Describe the camera features and condition..."
                       />
                     </div>
@@ -307,7 +316,7 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                         name="image"
                         value={formData.image}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                         placeholder="https://example.com/camera-image.jpg"
                       />
                     </div>
@@ -321,10 +330,10 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                         name="inclusions"
                         value={formData.inclusions}
                         onChange={handleInputChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                         placeholder="Battery, Charger, Lens Cap, Strap"
                       />
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-xs sm:text-sm text-gray-500">
                         Separate multiple items with commas
                       </p>
                     </div>
@@ -338,28 +347,28 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
                         value={formData.specs}
                         onChange={handleInputChange}
                         rows={3}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-sm sm:text-base"
                         placeholder="45MP Full-Frame, 8K Video, 12fps Continuous, Dual Pixel AF"
                       />
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-xs sm:text-sm text-gray-500">
                         Separate specifications with commas
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex justify-end space-x-3 pt-6">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 sm:pt-6 space-y-2 sm:space-y-0 space-y-reverse">
                     <button
                       type="button"
                       onClick={resetForm}
                       disabled={formLoading}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                      className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={formLoading}
-                      className="inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                      className="w-full sm:w-auto inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                     >
                       {formLoading ? (
                         <>
@@ -400,13 +409,13 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
         {/* Cameras List */}
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="flex justify-center items-center py-8 sm:py-12">
+              <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : cameras.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-8 sm:py-12">
               <svg
-                className="mx-auto h-12 w-12 text-gray-400"
+                className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -426,114 +435,226 @@ const AdminCameras = ({ setNotification, setActivePage }) => {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      Camera
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      Price
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      Details
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {cameras.map((camera) => (
-                    <tr key={camera._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12">
-                            {camera.image ? (
-                              <img
-                                className="h-12 w-12 rounded-lg object-cover"
-                                src={camera.image}
-                                alt={camera.name}
-                              />
-                            ) : (
-                              <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                                <svg
-                                  className="h-6 w-6 text-gray-400"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                                  />
-                                </svg>
+            <>
+              {/* Desktop Table */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Camera
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Price
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Details
+                      </th>
+                      <th scope="col" className="relative px-4 lg:px-6 py-3">
+                        <span className="sr-only">Actions</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {cameras.map((camera) => (
+                      <tr key={camera._id}>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10 lg:h-12 lg:w-12">
+                              {camera.image ? (
+                                <img
+                                  className="h-10 w-10 lg:h-12 lg:w-12 rounded-lg object-cover"
+                                  src={camera.image}
+                                  alt={camera.name}
+                                />
+                              ) : (
+                                <div className="h-10 w-10 lg:h-12 lg:w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                  <svg
+                                    className="h-5 w-5 lg:h-6 lg:w-6 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div className="ml-3 lg:ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {camera.name}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {camera.specs && camera.specs[0]}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            ₹{camera.pricePerDay}/day
+                          </div>
+                          {camera.offerPrice && (
+                            <div className="text-sm text-red-600 line-through">
+                              ₹{camera.offerPrice}/day
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4">
+                          <div className="text-sm text-gray-900 max-w-xs truncate">
+                            {camera.description}
+                          </div>
+                          {camera.inclusions &&
+                            camera.inclusions.length > 0 && (
+                              <div className="text-xs text-gray-500 mt-1">
+                                Includes:{" "}
+                                {camera.inclusions.slice(0, 2).join(", ")}
+                                {camera.inclusions.length > 2 &&
+                                  ` +${camera.inclusions.length - 2} more`}
                               </div>
                             )}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {camera.name}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => handleEdit(camera)}
+                            className="text-blue-600 hover:text-blue-900 mr-4"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(camera._id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Cards */}
+              <div className="sm:hidden divide-y divide-gray-200">
+                {cameras.map((camera) => (
+                  <div key={camera._id} className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0 h-12 w-12">
+                          {camera.image ? (
+                            <img
+                              className="h-12 w-12 rounded-lg object-cover"
+                              src={camera.image}
+                              alt={camera.name}
+                            />
+                          ) : (
+                            <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                              <svg
+                                className="h-6 w-6 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                              </svg>
                             </div>
-                            <div className="text-sm text-gray-500">
-                              {camera.specs && camera.specs[0]}
-                            </div>
-                          </div>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-m font-medium text-gray-900">
-                          ₹{camera.pricePerDay}/day
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-900">
+                            {camera.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 mt-1">
+                            ₹{camera.pricePerDay}/day
+                            {camera.offerPrice && (
+                              <span className="text-red-600 line-through ml-2">
+                                ₹{camera.offerPrice}/day
+                              </span>
+                            )}
+                          </p>
                         </div>
-                        {camera.offerPrice && (
-                          <div className="text-sm text-red-600 line-through">
-                            ₹{camera.offerPrice}/day
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs">
-                          {camera.description}
-                        </div>
-                        {camera.inclusions && camera.inclusions.length > 0 && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            Includes: {camera.inclusions.slice(0, 2).join(", ")}
-                            {camera.inclusions.length > 2 &&
-                              ` +₹{camera.inclusions.length - 2} more`}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      </div>
+                      <div className="flex space-x-2">
                         <button
                           onClick={() => handleEdit(camera)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-blue-600 hover:text-blue-900 p-1"
                         >
-                          Edit
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
                         </button>
                         <button
                           onClick={() => handleDelete(camera._id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 p-1"
                         >
-                          Delete
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </div>
+                    {camera.description && (
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                        {camera.description}
+                      </p>
+                    )}
+                    {camera.inclusions && camera.inclusions.length > 0 && (
+                      <p className="text-xs text-gray-500 mt-2">
+                        Includes: {camera.inclusions.slice(0, 3).join(", ")}
+                        {camera.inclusions.length > 3 &&
+                          ` +${camera.inclusions.length - 3} more`}
+                      </p>
+                    )}
+                    {camera.specs && camera.specs.length > 0 && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Specs: {camera.specs.slice(0, 2).join(", ")}
+                        {camera.specs.length > 2 &&
+                          ` +${camera.specs.length - 2} more`}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>

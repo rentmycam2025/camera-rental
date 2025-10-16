@@ -266,207 +266,136 @@ const sendCustomerConfirmationEmail = async (booking) => {
   try {
     const { totalAmount } = calculateBookingTotal(booking);
 
-    const emailHtml = `<!DOCTYPE html>
-                <html lang="en">
-                <head>
-                <meta charset="UTF-8">
-                <title>Booking Confirmation</title>
-                <style>
-                    body {
-                    margin: 0;
-                    padding: 0;
-                    font-family: 'Inter', Arial, sans-serif;
-                    background-color: #f9fafb;
-                    color: #1f2937;
-                    line-height: 1.5;
-                    }
-                    .container {
-                    max-width: 680px;
-                    margin: 40px auto;
-                    background: #ffffff;
-                    border-radius: 12px;
-                    overflow: hidden;
-                    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-                    }
-                    .header {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 25px 35px;
-                    border-bottom: 4px solid #F97316;
-                    background: #ffffff;
-                    }
-                    .header img {
-                    max-width: 140px;
-                    }
-                    .header h2 {
-                    font-size: 24px;
-                    font-weight: 700;
-                    color: #F97316;
-                    margin: 0;
-                    }
-                    .content {
-                    padding: 35px 40px;
-                    }
-                    .greeting {
-                    font-size: 16px;
-                    font-weight: 500;
-                    margin-bottom: 12px;
-                    }
-                    .intro {
-                    font-size: 15px;
-                    color: #4b5563;
-                    margin-bottom: 25px;
-                    }
-                    .section-title {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #F97316;
-                    border-bottom: 1px solid #f3f4f6;
-                    padding-bottom: 8px;
-                    margin-bottom: 20px;
-                    }
-                    .card {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: #ffffff;
-                    border-radius: 8px;
-                    padding: 15px 20px;
-                    margin-bottom: 12px;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-                    }
-                    .card .item-label {
-                    display: flex;
-                    align-items: center;
-                    font-size: 15px;
-                    color: #4b5563;
-                    }
-                    .card .item-label svg {
-                    margin-right: 10px;
-                    fill: #F97316;
-                    }
-                    .card .item-value {
-                    font-weight: 600;
-                    font-size: 15px;
-                    color: #F97316;
-                    }
-                    .total {
-                    text-align: right;
-                    font-size: 20px;
-                    font-weight: 700;
-                    color: #F97316;
-                    margin-top: 25px;
-                    }
-                    .note {
-                    font-size: 14px;
-                    color: #4b5563;
-                    margin-top: 25px;
-                    padding-top: 15px;
-                    border-top: 1px solid #f3f4f6;
-                    }
-                    .footer {
-                    font-size: 12px;
-                    color: #9ca3af;
-                    text-align: center;
-                    padding: 15px 0;
-                    background: #f9fafb;
-                    border-top: 1px solid #f3f4f6;
-                    }
+    const simpleEmailHtml = `<!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                <meta charset="UTF-8">
+                                <title>Booking Confirmation</title>
+                                <style>
+                                    body {
+                                        margin: 0;
+                                        padding: 0;
+                                        font-family: 'Inter', Arial, sans-serif;
+                                        background-color: #f5f5f5;
+                                        color: #1f2937;
+                                        line-height: 1.5;
+                                    }
+                                    .container {
+                                        max-width: 600px;
+                                        margin: 30px auto;
+                                        background: #ffffff;
+                                        border-radius: 12px;
+                                        overflow: hidden;
+                                        padding: 40px 30px;
+                                        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                                        text-align: center;
+                                    }
+                                    .logo {
+                                        max-width: 120px;
+                                        margin-bottom: 25px;
+                                    }
+                                    h2 {
+                                        color: #F97316;
+                                        font-size: 26px;
+                                        font-weight: 700;
+                                        margin-bottom: 15px;
+                                    }
+                                    p {
+                                        font-size: 16px;
+                                        color: #374151;
+                                        margin-bottom: 15px;
+                                    }
+                                    .highlight {
+                                        font-weight: 600;
+                                        color: #F97316;
+                                    }
+                                    .contact {
+                                        display: flex;
+                                        justify-content: center;
+                                        gap: 20px;
+                                        margin: 25px 0;
+                                        flex-wrap: wrap;
+                                    }
+                                    .contact-item {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        padding: 12px 20px;
+                                        border-radius: 8px;
+                                        background-color: #F9FAFB;
+                                        text-decoration: none;
+                                        color: #1f2937;
+                                        font-weight: 500;
+                                        transition: all 0.2s ease-in-out;
+                                    }
+                                    .contact-item img {
+                                        width: 24px;
+                                        height: 24px;
+                                    }
+                                    .contact-item:hover {
+                                        background-color: #F97316;
+                                        color: #ffffff;
+                                    }
+                                    .contact-item:hover img {
+                                        filter: brightness(0) invert(1);
+                                    }
+                                    .footer {
+                                        font-size: 12px;
+                                        color: #9ca3af;
+                                        margin-top: 30px;
+                                    }
+                                    @media only screen and (max-width: 480px) {
+                                        .container {
+                                            padding: 25px 20px;
+                                        }
+                                        h2 {
+                                            font-size: 22px;
+                                        }
+                                        p, .contact-item {
+                                            font-size: 15px;
+                                        }
+                                    }
+                                </style>
+                                </head>
+                                <body>
+                                <div class="container">
+                                    <img class="logo" src="https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760359478/logo_dark_d7ik7y.png" alt="Logo">
+                                    <h2>Booking Confirmed!</h2>
+                                    <p>Hello <span class="highlight">${
+                                      booking.fullName
+                                    }</span>,</p>
+                                    <p>Your rental booking has been successfully confirmed.</p>
+                                    <p>Our team will call or message you within a few hours to finalize the next steps.</p>
+                                    <p class="highlight">Total Rental Price: ₹${totalAmount.toLocaleString()}</p>
 
-                    @media only screen and (max-width: 600px) {
-                    .container {
-                        margin: 0;
-                        border-radius: 0;
-                        box-shadow: none;
-                    }
-                    .content {
-                        padding: 20px 25px;
-                    }
-                    .header {
-                        flex-direction: column;
-                        text-align: center;
-                    }
-                    .header h2 {
-                        margin-top: 12px;
-                        font-size: 22px;
-                    }
-                    }
-                </style>
-                </head>
-                <body>
-                <div class="container">
+                                    <!-- Contact Section -->
+                                    <div class="contact">
+                                        <!-- Call Us -->
+                                        <a href="tel:${
+                                          process.env.CONTACT_NUMBER
+                                        }" class="contact-item">
+                                            <img src="https://img.icons8.com/?size=100&id=I24lanX6Nq71&format=png&color=000000" alt="Phone Icon">
+                                            Call Us
+                                        </a>
 
-                    <!-- Header -->
-                    <div class="header">
-                    <img src="https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760359478/logo_dark_d7ik7y.png" alt="Logo">
-                    <h2>Booking Confirmed</h2>
-                    </div>
+                                        <!-- WhatsApp Us -->
+                                        <a href="https://wa.me/${
+                                          process.env.WHATSAPP_NUMBER
+                                        }" class="contact-item">
+                                            <img src="https://img.icons8.com/?size=100&id=16713&format=png&color=000000" alt="WhatsApp Icon">
+                                            WhatsApp Us
+                                        </a>
+                                    </div>
 
-                    <!-- Content -->
-                    <div class="content">
-                    <div class="greeting">Hello <strong>${
-                      booking.fullName
-                    }</strong>,</div>
-                    <p class="intro">Your booking has been successfully confirmed. Here are the details:</p>
-
-                    <div class="section-title">Order Details</div>
-
-                    <!-- Rental Period Card -->
-                    <div class="card">
-                        <div class="item-label">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 16H5V9h14v11zm0-13H5V6h14v1z"/>
-                        </svg>
-                        Rental Period
-                        </div>
-                        <div class="item-value">${booking.rentalPeriod}</div>
-                    </div>
-
-                    <!-- Cameras Card -->
-                    <div class="card">
-                        <div class="item-label">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                            <path d="M12 5c-3.859 0-7 3.141-7 7s3.141 7 7 7 7-3.141 7-7-3.141-7-7-7zm0 12c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5zm10-12h-3.586l-1.707-1.707A.996.996 0 0 0 16 3h-8c-.265 0-.52.105-.707.293L5.586 5H2c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h20c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2z"/>
-                        </svg>
-                        Cameras
-                        </div>
-                        <div class="item-value">${
-                          booking.cameras.length
-                        } items</div>
-                    </div>
-
-                    <!-- Accessories Card -->
-                    <div class="card">
-                        <div class="item-label">
-                        <svg width="16" height="16" viewBox="0 0 24 24">
-                            <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1a6.967 6.967 0 0 0-1.7-.98l-.38-2.65A.495.495 0 0 0 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.63.24-1.21.57-1.7.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.5.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.5.41 1.07.74 1.7.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.63-.24 1.21-.57 1.7-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.5-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5S10.07 8.5 12 8.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
-                        </svg>
-                        Accessories
-                        </div>
-                        <div class="item-value">${
-                          booking.accessories.length
-                        } items</div>
-                    </div>
-
-                    <!-- Total -->
-                    <p class="total">Total Amount: <strong>₹${totalAmount.toLocaleString()}</strong></p>
-
-                    <!-- Note -->
-                    <p class="note">We will contact you shortly to finalize pickup or delivery. Thank you for choosing <strong>${
-                      process.env.BRAND_NAME || "Your Company"
-                    }</strong>.</p>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="footer">© ${new Date().getFullYear()} ${
+                                    <p>Thank you for choosing <span class="highlight">${
+                                      process.env.BRAND_NAME || "Your Company"
+                                    }</span>!</p>
+                                    <div class="footer">© ${new Date().getFullYear()} ${
       process.env.BRAND_NAME || "Your Company"
     }. All rights reserved.</div>
-
-                </div>
-                </body>
-                </html>
-                `;
+                                </div>
+                                </body>
+                                </html>`;
 
     const sendSmtpEmail = {
       sender: {
@@ -482,7 +411,7 @@ const sendCustomerConfirmationEmail = async (booking) => {
       subject: `Booking Confirmation - ${
         process.env.BRAND_NAME || "Our Company"
       }`,
-      htmlContent: emailHtml,
+      htmlContent: simpleEmailHtml,
     };
 
     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);

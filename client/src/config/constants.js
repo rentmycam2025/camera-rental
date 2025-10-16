@@ -1,29 +1,32 @@
 // Brand Configuration
 export const BRAND_CONFIG = {
-  // Company Details
-  name: "Rent My Cam",
-  email: "info@rentmycam.com",
-  phone: "+91 98765 43210",
-  address: "123 Film Street, Mumbai, India",
-  logo: "https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760358534/logo_dark_1_kgfl3o.png",
+  name: import.meta.env.VITE_BRAND_NAME || "Rent My Cam",
+  email: import.meta.env.VITE_BRAND_EMAIL || "info@rentmycam.com",
+  phone: import.meta.env.VITE_BRAND_PHONE || "+91 98765 43210",
+  address:
+    import.meta.env.VITE_BRAND_ADDRESS || "123 Film Street, Mumbai, India",
+  logo:
+    import.meta.env.VITE_BRAND_LOGO ||
+    "https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760358534/logo_dark_1_kgfl3o.png",
   logoWhite:
+    import.meta.env.VITE_BRAND_LOGO_WHITE ||
     "https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760357601/logo_white_cropped_pgtned.png",
-
-  // Company Description
   description:
+    import.meta.env.VITE_BRAND_DESC ||
     "Rent the latest professional cameras, lenses, and production gear effortlessly.",
-  tagline: "Capture Your Vision In Ultra HD",
+  tagline:
+    import.meta.env.VITE_BRAND_TAGLINE || "Capture Your Vision In Ultra HD",
 
-  // Social Media
   social: {
-    instagram: "#",
-    facebook: "#",
-    twitter: "#",
+    instagram: import.meta.env.VITE_INSTAGRAM_URL || "#",
+    facebook: import.meta.env.VITE_FACEBOOK_URL || "#",
+    twitter: import.meta.env.VITE_TWITTER_URL || "#",
+    youtube: import.meta.env.VITE_YOUTUBE_URL || "#",
   },
 
-  // Business Info
-  workingHours: "Mon - Sun: 9:00 AM - 9:00 PM",
-  supportEmail: "support@rentmycam.com",
+  workingHours:
+    import.meta.env.VITE_WORKING_HOURS || "Mon - Sun: 9:00 AM - 9:00 PM",
+  supportEmail: import.meta.env.VITE_SUPPORT_EMAIL || "support@rentmycam.com",
 };
 
 // Theme Configuration
@@ -35,7 +38,7 @@ export const THEME_CONFIG = {
       200: "#fed7aa",
       300: "#fdba74",
       400: "#fb923c",
-      500: "#f97316", // orange-600 equivalent
+      500: "#f97316", // orange-600
       600: "#ea580c",
       700: "#c2410c",
       800: "#9a3412",
@@ -48,15 +51,11 @@ export const THEME_CONFIG = {
       info: "#0284c7", // blue-600
     },
   },
-
-  // Layout
   borderRadius: {
     small: "0.5rem", // rounded-lg
     medium: "0.75rem", // rounded-xl
     large: "1rem", // rounded-2xl
   },
-
-  // Shadows
   shadows: {
     small: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
     medium: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
@@ -75,8 +74,7 @@ export const NAV_CONFIG = {
 };
 
 // API Configuration
-// const baseURL = "http://localhost:5000/api";
-const baseURL = "https://camera-rental-api-vesq.onrender.com/api";
+const baseURL = import.meta.env.VITE_API_URL;
 
 export const API_CONFIG = {
   baseURL: baseURL,
@@ -85,5 +83,5 @@ export const API_CONFIG = {
     accessories: "/accessories",
     bookings: "/bookings",
   },
-  timeout: 10000,
+  timeout: 20000, // 20 seconds
 };

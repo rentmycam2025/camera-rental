@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Accessory = require("../models/Accessory");
+const { authMiddleware, adminOnly } = require("../middleware/authMiddleware");
 
 // GET all accessories
 router.get("/", async (req, res) => {
@@ -9,14 +10,14 @@ router.get("/", async (req, res) => {
 });
 
 // POST add accessory
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, adminOnly, async (req, res) => {
   const accessory = new Accessory(req.body);
   await accessory.save();
   res.status(201).json(accessory);
 });
 
 // PUT update accessory
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
   const updated = await Accessory.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -24,7 +25,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE accessory
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   await Accessory.findByIdAndDelete(req.params.id);
   res.json({ message: "Accessory deleted" });
 });

@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
+const { authMiddleware, adminOnly } = require("../middleware/authMiddleware");
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -27,7 +28,7 @@ const {
 // });
 
 // GET all bookings
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, adminOnly, async (req, res) => {
   try {
     const bookings = await Booking.find().populate("cameras accessories");
     res.json({
@@ -44,7 +45,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET single booking
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate(
       "cameras accessories"
@@ -126,7 +127,7 @@ router.post(
 );
 
 // PUT update booking
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -165,7 +166,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE booking
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const booking = await Booking.findByIdAndDelete(req.params.id);
 
@@ -244,7 +245,7 @@ router.get("/:id/wa-link", async (req, res) => {
 });
 
 // GET booking status
-router.get("/:id/status", async (req, res) => {
+router.get("/:id/status", authMiddleware, adminOnly, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
 

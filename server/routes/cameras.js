@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Camera = require("../models/Camera");
+const { authMiddleware, adminOnly } = require("../middleware/authMiddleware");
 
 // GET all cameras
 router.get("/", async (req, res) => {
@@ -16,14 +17,14 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST add camera
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, adminOnly, async (req, res) => {
   const camera = new Camera(req.body);
   await camera.save();
   res.status(201).json(camera);
 });
 
 // PUT update camera
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
   const updated = await Camera.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
@@ -31,7 +32,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE camera
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   await Camera.findByIdAndDelete(req.params.id);
   res.json({ message: "Camera deleted" });
 });

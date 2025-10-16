@@ -137,3 +137,25 @@ export const getBookings = async () => {
     throw error;
   }
 };
+export const adminLogin = async (email, password) => {
+  try {
+    const response = await api.post("/auth/login", { email, password });
+    return response.data;
+  } catch (error) {
+    console.error("Error during admin login:", error);
+    throw error;
+  }
+};
+// Add Authorization header to every request if token exists
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("adminToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+
+    // Add API key header
+    config.headers["x-api-key"] = import.meta.env.VITE_API_KEY;
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
