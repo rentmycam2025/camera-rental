@@ -28,7 +28,13 @@ app.use("/api/cameras", apiKeyAuth, camerasRoutes);
 app.use("/api/accessories", apiKeyAuth, accessoriesRoutes);
 app.use("/api/bookings", apiKeyAuth, bookingsRoutes);
 
-app.get("/", (req, res) => res.send("Camera Rental Backend Running"));
-
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Rent My Cam Backend is healthy and running!",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
