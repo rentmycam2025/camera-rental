@@ -16,6 +16,7 @@ import { useCart } from "./hooks/useCart";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Notification from "./components/Notification";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Pages
 import Home from "./pages/Home";
@@ -24,6 +25,8 @@ import AccessoryList from "./pages/AccessoryList";
 import ProductDetail from "./pages/ProductDetail";
 import CartPage from "./pages/Cart";
 import BookingForm from "./pages/BookingForm";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 // Router Wrapper Component
 function AppContent() {
@@ -132,8 +135,10 @@ function AppContent() {
       />
 
       <main className="flex-grow">
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
+
           <Route
             path="/"
             element={
@@ -208,6 +213,8 @@ function AppContent() {
               />
             }
           />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </main>
 

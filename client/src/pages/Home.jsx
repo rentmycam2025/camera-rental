@@ -84,10 +84,10 @@ const Home = ({
         <div className="absolute inset-0 bg-black/65"></div>
         <div className="relative z-10 p-6 max-w-5xl animate-on-scroll">
           <p className="text-lg font-medium text-primary-500 mb-4 tracking-widest uppercase">
-            Rent Professional Camera Gear
+            Affordable Professional Gear Rentals
           </p>
           <h1 className="text-5xl sm:text-6xl font-extrabold mb-8 text-white leading-tight">
-            Film <span className="text-primary-500">Your</span> Vision.
+            Shoot Like a <span className="text-primary-500">Pro</span>
           </h1>
           <p className="mb-10 text-xl text-gray-300 max-w-2xl mx-auto">
             Get instant access to top-tier cinema and photography equipment
