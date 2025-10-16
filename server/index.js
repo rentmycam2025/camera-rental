@@ -14,7 +14,7 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
-// ✅ Use allowed origins from .env
+// ✅ Allowed origins from .env
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : [];
@@ -22,19 +22,20 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g., mobile apps, curl)
+      // Allow requests with no origin (e.g., curl, mobile)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
     credentials: true,
   })
 );
 
+// Parse JSON
 app.use(bodyParser.json());
 
 // MongoDB connection
@@ -49,7 +50,7 @@ app.use("/api/cameras", apiKeyAuth, camerasRoutes);
 app.use("/api/accessories", apiKeyAuth, accessoriesRoutes);
 app.use("/api/bookings", apiKeyAuth, bookingsRoutes);
 
-// Health check endpoint
+// Health check
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
