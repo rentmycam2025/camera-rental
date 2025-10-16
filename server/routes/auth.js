@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 // Single admin credentials (you can move these to .env)
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@camerarental.com";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const ADMIN_EMAIL = process.env.ADMIN_LOGIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
