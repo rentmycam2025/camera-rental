@@ -75,7 +75,7 @@ export const socialMedia = [
 ];
 
 export const stats = [
-  { number: "500+", label: "Happy Customers" },
+  { number: "1500+", label: "Happy Customers" },
   { number: "50+", label: "Camera Models" },
   { number: "100+", label: "Accessories" },
   { number: "24/7", label: "Support" },

@@ -36,14 +36,16 @@ const Footer = () => (
         </h4>
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2 hover:text-primary-400 transition">
-            <AiOutlineHome /> <Link to="/">Home</Link>
+            <AiOutlineHome size={18} className="flex-shrink-0" />{" "}
+            <Link to="/">Home</Link>
           </li>
           <li className="flex items-center gap-2 hover:text-primary-400 transition">
-            <AiOutlineCamera />
+            <AiOutlineCamera size={18} className="flex-shrink-0" />{" "}
             <Link to="/cameras">Cameras</Link>
           </li>
           <li className="flex items-center gap-2 hover:text-primary-400 transition">
-            <RiCameraLensAiLine /> <Link to="/accessories">Accessories</Link>
+            <RiCameraLensAiLine size={18} className="flex-shrink-0" />{" "}
+            <Link to="/accessories">Accessories</Link>
           </li>
         </ul>
       </div>
@@ -54,14 +56,18 @@ const Footer = () => (
           Contact
         </h4>
         <ul className="space-y-2 text-sm">
-          <li className="flex items-center gap-2">
-            <AiOutlineMail /> {BRAND_CONFIG.email}
+          <li className="flex items-center gap-2 hover:text-primary-400 transition">
+            <AiOutlineMail size={18} className="flex-shrink-0" />
+            <span>{BRAND_CONFIG.email}</span>
           </li>
-          <li className="flex items-center gap-2">
-            <MdOutlinePermPhoneMsg /> {BRAND_CONFIG.phone}
+          <li className="flex items-center gap-2 hover:text-primary-400 transition">
+            <MdOutlinePermPhoneMsg size={18} className="flex-shrink-0" />
+            <span>{BRAND_CONFIG.phone}</span>
           </li>
-          <li className="flex items-center gap-2">
-            <MdOutlineLocationOn /> {BRAND_CONFIG.address}
+
+          <li className="flex items-center gap-2 hover:text-primary-400 transition">
+            <MdOutlineLocationOn size={18} className="flex-shrink-0" />
+            <span>{BRAND_CONFIG.address}</span>
           </li>
         </ul>
       </div>
@@ -73,11 +79,11 @@ const Footer = () => (
         </h4>
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2 hover:text-primary-400 transition">
-            <RiFilePaperLine className="w-5 h-5" />
+            <RiFilePaperLine size={18} />
             <Link to="/terms">Terms of Service</Link>
           </li>
           <li className="flex items-center gap-2 hover:text-primary-400 transition">
-            <MdOutlinePrivacyTip className="w-5 h-5" />
+            <MdOutlinePrivacyTip size={18} />
             <Link to="/privacy">Privacy Policy</Link>
           </li>
         </ul>

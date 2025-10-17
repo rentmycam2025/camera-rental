@@ -1,4 +1,3 @@
-// App.jsx - Final clean version without AuthContext
 import React, { useState, useCallback, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -28,7 +27,6 @@ import BookingForm from "./pages/BookingForm";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 
-// Router Wrapper Component
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,12 +37,6 @@ function AppContent() {
 
   // Data fetching hook
   const { cameraList, accessoryList, isLoading } = useApi(setNotification);
-
-  // Debug useEffect
-  useEffect(() => {
-    console.log("Camera List in App:", cameraList);
-    console.log("Accessory List in App:", accessoryList);
-  }, [cameraList, accessoryList]);
 
   // Cart logic hook
   const {
@@ -73,7 +65,6 @@ function AppContent() {
   // Handler for search selection
   const handleSearchSelect = useCallback(
     (item) => {
-      console.log("Search selected item:", item);
       setSelectedItem(item);
       navigate("/product", { state: { item } });
       setActivePage("detail");
@@ -82,7 +73,7 @@ function AppContent() {
         type: "success",
       });
     },
-    [navigate, setNotification]
+    [navigate]
   );
 
   // Sync active page with route changes
@@ -96,7 +87,6 @@ function AppContent() {
     else if (path === "/product") setActivePage("detail");
   }, [location.pathname]);
 
-  // Handler for page navigation
   const handlePageChange = useCallback(
     (page) => {
       setActivePage(page);
@@ -132,13 +122,12 @@ function AppContent() {
         onSearchSelect={handleSearchSelect}
         cameraList={cameraList}
         accessoryList={accessoryList}
+        isLoading={isLoading} // Pass loading state
       />
 
       <main className="flex-grow">
         <ScrollToTop />
         <Routes>
-          {/* Public Routes */}
-
           <Route
             path="/"
             element={
@@ -231,7 +220,6 @@ function AppContent() {
   );
 }
 
-// Main App component with Router only
 export default function App() {
   return (
     <Router>

@@ -366,7 +366,7 @@ const Home = ({
               <div className="aspect-video bg-gray-100 rounded-lg mb-6 flex items-center justify-center border border-gray-300 overflow-hidden">
                 <iframe
                   title={BRAND_CONFIG.name}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.967116434641!2d77.59456231526332!3d12.971598590857246!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670f4fdf2d7%3A0x4c1d5d81c02e0c!2sBangalore%2C%20Karnataka%2C%20India!5e0!3m2!1sen!2sus!4v1696980623456!5m2!1sen!2sus"
+                  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d243.05948692207983!2d77.53593073254461!3d12.910820087507513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDU0JzM5LjMiTiA3N8KwMzInMDkuMyJF!5e0!3m2!1sen!2sin!4v1760694096680!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
                   className="border-0"

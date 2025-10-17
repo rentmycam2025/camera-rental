@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { BRAND_CONFIG, NAV_CONFIG } from "../config/constants";
 import { SEARCH_PLACEHOLDERS } from "../data/searchplaceholder";
 import SearchResults from "./SearchResults";
 import { FiSearch, FiShoppingCart, FiMenu, FiX } from "react-icons/fi";
 
-const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
+const Navbar = ({
+  activePage,
+  setActivePage,
+  cartCount,
+  onSearchSelect,
+  cameraList,
+  accessoryList,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -13,6 +20,8 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
   const [showResults, setShowResults] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [fade, setFade] = useState(true);
+
+  const searchRef = useRef(null);
 
   // Animate placeholder
   useEffect(() => {
@@ -26,7 +35,7 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle search input changes
+  // Debounced search using props
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setSearchResults([]);
@@ -35,65 +44,51 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
       return;
     }
 
-    const searchProducts = async () => {
-      setIsSearching(true);
-      setShowResults(true);
+    setIsSearching(true);
+    setShowResults(true);
 
-      try {
-        // Search in both cameras and accessories
-        const [camerasResponse, accessoriesResponse] = await Promise.all([
-          fetch("/api/cameras").then((res) => res.json()),
-          fetch("/api/accessories").then((res) => res.json()),
-        ]);
+    const timeoutId = setTimeout(() => {
+      const allProducts = [...cameraList, ...accessoryList];
+      const filtered = allProducts.filter(
+        (product) =>
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          product.category?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
-        const allProducts = [...camerasResponse, ...accessoriesResponse];
+      setSearchResults(filtered);
+      setIsSearching(false);
+    }, 300);
 
-        const filtered = allProducts.filter(
-          (product) =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            product.description
-              ?.toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            product.category?.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-
-        setSearchResults(filtered);
-      } catch (error) {
-        console.error("Search error:", error);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    // Debounce search
-    const timeoutId = setTimeout(searchProducts, 300);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  }, [searchQuery, cameraList, accessoryList]);
 
   const handleSearchSelect = (item) => {
     setSearchQuery("");
     setShowResults(false);
-    if (onSearchSelect) {
-      onSearchSelect(item);
-    }
+    if (onSearchSelect) onSearchSelect(item);
   };
 
-  const handleSearchBlur = () => {
-    // Delay hiding results to allow for click
-    setTimeout(() => setShowResults(false), 200);
+  const handleFocus = () => {
+    if (searchQuery.trim() !== "") setShowResults(true);
   };
 
-  const handleSearchFocus = () => {
-    if (searchQuery.trim() !== "") {
-      setShowResults(true);
-    }
-  };
+  // Hide search on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const filteredNavItems = NAV_CONFIG.items.filter(
     (item) => item.page !== "contact"
   );
-
   const leftNavItems = filteredNavItems.filter(
     (item) =>
       item.page === "home" ||
@@ -151,54 +146,44 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
           </div>
 
           {/* Search + Cart + Book Now */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4" ref={searchRef}>
             {/* Search */}
             <div className="relative">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
-                  className="pl-10 pr-4 py-2 rounded-full text-primary-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base w-80" // Increased width and padding
-                  placeholder=""
-                />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={handleFocus}
+                className="pl-10 pr-4 py-2 rounded-full text-primary-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base w-80"
+              />
 
-                {/* Animated placeholder */}
-                {searchQuery === "" && (
-                  <span
-                    className={`absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none transition-opacity duration-500 ${
-                      fade ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    {SEARCH_PLACEHOLDERS[placeholderIndex]}
-                  </span>
-                )}
+              {/* Animated placeholder */}
+              {searchQuery === "" && (
+                <span
+                  className={`absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none transition-opacity duration-500 ${
+                    fade ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  {SEARCH_PLACEHOLDERS[placeholderIndex]}
+                </span>
+              )}
 
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              </div>
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
               {/* Search Results Dropdown */}
               {showResults && (
-                <div className="absolute top-full left-0 right-0 mt-2">
-                  {/* Increased margin */}
-                  <SearchResults
-                    query={searchQuery}
-                    results={searchResults}
-                    isLoading={isSearching}
-                    onSelect={handleSearchSelect}
-                  />
-                </div>
+                <SearchResults
+                  query={searchQuery}
+                  results={searchResults}
+                  isLoading={isSearching}
+                  onSelect={handleSearchSelect}
+                />
               )}
             </div>
 
             {/* Cart */}
             {rightNavItems.map((item) => (
-              <Link
-                to={item.page === "home" ? "/" : `/${item.page}`}
-                key={item.page}
-              >
+              <Link to={`/${item.page}`} key={item.page}>
                 <button
                   onClick={() => setActivePage(item.page)}
                   className={`text-sm font-semibold uppercase transition duration-300 relative group ${
@@ -257,11 +242,9 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
               />
             </button>
           </Link>
+
           <Link to="/cart">
-            <button
-              onClick={() => setActivePage("cart")}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 relative"
-            >
+            <button className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative">
               <FiShoppingCart />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold bg-accent-error rounded-full text-white ring-2 ring-white min-w-[18px] flex items-center justify-center">
@@ -276,29 +259,24 @@ const Navbar = ({ activePage, setActivePage, cartCount, onSearchSelect }) => {
         {isOpen && (
           <div className="md:hidden bg-white shadow-xl border-t border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
-              {/* Search */}
               <div className="px-4 py-2 relative">
                 <input
                   type="text"
                   placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
-                  className="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full text-sm"
+                  onFocus={handleFocus}
+                  className="pl-10 text-black  pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full text-sm"
                 />
                 <FiSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
-                {/* Mobile Search Results */}
                 {showResults && (
-                  <div className="absolute top-full left-0 right-0 mt-1 z-50">
-                    <SearchResults
-                      query={searchQuery}
-                      results={searchResults}
-                      isLoading={isSearching}
-                      onSelect={handleSearchSelect}
-                    />
-                  </div>
+                  <SearchResults
+                    query={searchQuery}
+                    results={searchResults}
+                    isLoading={isSearching}
+                    onSelect={handleSearchSelect}
+                  />
                 )}
               </div>
 
