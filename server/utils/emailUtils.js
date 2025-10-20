@@ -16,6 +16,10 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER, // hello@rentmycam.in
     pass: process.env.EMAIL_PASSWORD, // email password or app password
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+  connectionTimeout: 15000,
 });
 // Initialize Brevo API client
 // const defaultClient = SibApiV3Sdk.ApiClient.instance;
