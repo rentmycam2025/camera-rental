@@ -10,8 +10,8 @@ const {
 
 const transporter = nodemailer.createTransport({
   host: "smtp.hostinger.com",
-  port: 465,
-  secure: true, // true for 465
+  port: 587,
+  secure: false, // true for 465
   auth: {
     user: process.env.EMAIL_USER, // hello@rentmycam.in
     pass: process.env.EMAIL_PASSWORD, // email password or app password
