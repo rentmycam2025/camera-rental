@@ -33,5 +33,5 @@ We collect the following information to provide and manage rentals:
 ## 7. Changes to This Policy
 - Updates to this policy will be posted on this page.
 
-If you have questions about this Privacy Policy, please contact us at rakshith.4324@gmail.com.
+If you have questions about this Privacy Policy, please contact us at hello@rentmycam.in.
 `;

@@ -104,7 +104,7 @@ const Cart = ({
                   {/* Image */}
                   <img
                     src={item.image}
-                    alt={item.name}
+                    alt={`${item.name}} cheap camera rental in Bengaluru`}
                     className="w-full sm:w-32 h-32 object-contain rounded-xl shrink-0 sm:mr-6 mb-4 sm:mb-0 border border-gray-200"
                   />
 

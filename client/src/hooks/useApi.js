@@ -11,7 +11,7 @@ export const useApi = (setNotification) => {
       try {
         setIsLoading(true);
 
-        console.log("Fetching data from API...");
+        // console.log("Fetching data from API...");
 
         // API returns direct array, no need to extract from response.data
         const cameras = await getCameras();

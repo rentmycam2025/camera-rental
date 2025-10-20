@@ -76,16 +76,21 @@ const Home = ({
         className="relative h-[90vh] bg-gray-50 flex flex-col items-center justify-center text-center overflow-hidden shadow-lg"
         style={{
           backgroundImage:
-            "url(https://cdn.shoplightspeed.com/shops/623136/files/57776953/shutterstock-2240301243-1.webp)",
+            "url(https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760934625/banner_swotvb.jpg)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black/65"></div>
+        <div className="absolute inset-0 bg-black/70"></div>
         <div className="relative z-10 p-6 max-w-5xl animate-on-scroll">
-          <p className="text-lg font-medium text-primary-500 mb-4 tracking-widest uppercase">
-            Affordable Professional Gear Rentals
+          <p className="text-lg font-medium mb-4 tracking-widest uppercase">
+            Affordable Professional Gear Rentals in{" "}
+            <span className="font-bold">
+              <span className="text-yellow-400">Namma </span>
+              <span className="text-red-600">Bengaluru</span>
+            </span>
           </p>
+
           <h1 className="text-5xl sm:text-6xl font-extrabold mb-8 text-white leading-tight">
             Shoot Like a <span className="text-primary-500">Pro</span>
           </h1>
@@ -289,7 +294,7 @@ const Home = ({
             See Why Creators Choose Us
           </h2>
           <div className="text-center text-gray-600 mb-10 animate-on-scroll">
-            <span className="text-3xl font-bold text-primary-500">4.9/5.0</span>
+            <span className="text-3xl font-bold text-primary-500">4.8/5.0</span>
             <span className="text-lg"> from 1500+ satisfied customers</span>
           </div>
 

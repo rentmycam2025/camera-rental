@@ -53,10 +53,21 @@ function AppContent() {
   } = useCart(setNotification, setActivePage);
 
   // Handler for viewing product detail
+  // const handleViewDetail = useCallback(
+  //   (item) => {
+  //     setSelectedItem(item);
+  //     navigate("/product", { state: { item } });
+  //     setActivePage("detail");
+  //   },
+  //   [navigate]
+  // );
+  // Updated handler for dynamic product URLs
   const handleViewDetail = useCallback(
     (item) => {
+      // Generate URL-friendly slug
+      const slug = item.name.toLowerCase().replace(/\s+/g, "-");
+      navigate(`/product/${slug}`);
       setSelectedItem(item);
-      navigate("/product", { state: { item } });
       setActivePage("detail");
     },
     [navigate]
@@ -65,8 +76,9 @@ function AppContent() {
   // Handler for search selection
   const handleSearchSelect = useCallback(
     (item) => {
+      const slug = item.name.toLowerCase().replace(/\s+/g, "-");
+      navigate(`/product/${slug}`);
       setSelectedItem(item);
-      navigate("/product", { state: { item } });
       setActivePage("detail");
       setNotification({
         message: `Navigating to ${item.name}`,
@@ -162,8 +174,8 @@ function AppContent() {
               />
             }
           />
-          <Route
-            path="/product"
+          {/* <Route
+            path="/product/:slug"
             element={
               <ProductDetail
                 item={location.state?.item || selectedItem}
@@ -171,7 +183,19 @@ function AppContent() {
                 setActivePage={setActivePage}
               />
             }
+          /> */}
+          <Route
+            path="/product/:slug"
+            element={
+              <ProductDetail
+                cameraList={cameraList}
+                accessoryList={accessoryList}
+                addToCart={addToCart}
+                setActivePage={setActivePage}
+              />
+            }
           />
+
           <Route
             path="/cart"
             element={

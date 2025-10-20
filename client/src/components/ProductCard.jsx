@@ -8,7 +8,7 @@ const ProductCard = ({ item, onViewDetail, showDescription = true }) => (
     <div className="relative w-full aspect-square overflow-hidden rounded-lg perspective-1000">
       <img
         src={item.image}
-        alt={item.name}
+        alt={`${item.name}} camera rental in Bengaluru`}
         className="w-full h-full object-cover object-center transform scale-75 transition-transform duration-700 ease-out hover:scale-95 hover:rotate-2 hover:translate-y-1"
         onLoad={(e) => {
           // Animate from small to full size on load

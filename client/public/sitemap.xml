@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://rentmycam.in/</loc>
+    <lastmod>2025-10-18T12:29:22+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Location & SEO-focused pages -->
+  <url>
+    <loc>https://rentmycam.in/best-camera-rental-bengaluru</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/cheap-camera-rental-bengaluru</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/affordable-camera-rental-bengaluru</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/camera-rental-deals-bengaluru</loc>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Camera model pages -->
+  <url>
+    <loc>https://rentmycam.in/cameras/sony-fx3</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/cameras/sigma-35mm</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/cameras/sony-a7iv</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Accessories -->
+  <url>
+    <loc>https://rentmycam.in/accessories</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog & Guides (SEO gold!) -->
+  <url>
+    <loc>https://rentmycam.in/blog/best-cameras-for-weddings-bengaluru</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/blog/cheap-camera-rental-tips</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/blog/how-to-choose-camera-rental</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- About & Contact -->
+  <url>
+    <loc>https://rentmycam.in/about</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://rentmycam.in/contact</loc>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

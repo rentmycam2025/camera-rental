@@ -70,7 +70,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                       {item.image ? (
                         <img
                           src={item.image}
-                          alt={item.name}
+                          alt={`${item.name}} camera rental in Bengaluru`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.onerror = null;

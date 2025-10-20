@@ -45,24 +45,24 @@ export const howItWorksSteps = [
 
 export const reviews = [
   {
-    name: "Shubham Naik",
-    role: "Traveler",
+    name: "Raghav Shetty",
+    role: "Traveler, Bengaluru",
     review:
-      "Fantastic Customer Service... proactive communication and willingness to go the extra mile left a very positive impression on me.",
+      "Fantastic service! I rented the Sony FX3 body and Sigma lens—it was in perfect condition. The team was friendly and made the process seamless.",
     rating: 5,
   },
   {
-    name: "Iman Malik",
-    role: "Owner, Darkwhite studio",
+    name: "Ananya Gowda",
+    role: "Freelance Photographer, Bengaluru",
     review:
-      "Great service... I rented RS4 ghimbal from them. Brand new! Easy to handle and the balance was great.",
+      "Rented the Sigma 35mm 1.4 (Sony E mount) from them. Lens was brand new and handled beautifully. Highly recommended for professionals!",
     rating: 5,
   },
   {
-    name: "Indrajeet Naik",
-    role: "Photographer, Pune",
+    name: "Vishal Rao",
+    role: "Event Photographer, Bengaluru",
     review:
-      "Great service, all equipment was in a brand new like condition. I was surprised by their modest pricing.",
+      "Tried the Ronin Gimbal RS4 for my shoot. Super easy to balance and use. Equipment quality and service exceeded my expectations.",
     rating: 4,
   },
 ];

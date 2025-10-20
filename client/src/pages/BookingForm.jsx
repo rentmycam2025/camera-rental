@@ -50,11 +50,11 @@ const BookingForm = ({
 
   // Debug: Check cart items and categories
   useEffect(() => {
-    console.log("=== CART DEBUG ===");
-    console.log("Cart items:", cart);
-    console.log("Submission details:", submissionDetails);
-    console.log("Current step:", step);
-    console.log("Booking completed:", bookingCompleted);
+    // console.log("=== CART DEBUG ===");
+    // console.log("Cart items:", cart);
+    // console.log("Submission details:", submissionDetails);
+    // console.log("Current step:", step);
+    // console.log("Booking completed:", bookingCompleted);
   }, [cart, submissionDetails, step, bookingCompleted]);
 
   // Redirect if cart is empty (only if no booking completed)
@@ -215,11 +215,11 @@ const BookingForm = ({
         formData.append("userPhoto", form.userPhoto);
       }
 
-      console.log("Submitting booking...");
+      // console.log("Submitting booking...");
 
       await createBooking(formData);
 
-      console.log("Booking successful!");
+      // console.log("Booking successful!");
 
       const contactInfo = {
         name: form.fullName,
@@ -269,7 +269,7 @@ const BookingForm = ({
   };
 
   const renderStep = () => {
-    console.log("Rendering step:", step);
+    // console.log("Rendering step:", step);
 
     switch (step) {
       case 1:
@@ -613,11 +613,11 @@ const BookingForm = ({
           contact: "your registered number",
         };
 
-        console.log("Rendering confirmation page with:", {
-          name,
-          email,
-          contact,
-        });
+        // console.log("Rendering confirmation page with:", {
+        //   name,
+        //   email,
+        //   contact,
+        // });
 
         return (
           <div className="max-w-2xl mx-auto p-8 bg-white border border-gray-200 rounded-2xl shadow-lg">

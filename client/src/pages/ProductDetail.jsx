@@ -1,22 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import Loader from "../components/Loader";
 
-const ProductDetail = ({ item, setActivePage, addToCart }) => {
+const ProductDetail = ({
+  cameraList,
+  accessoryList,
+  setActivePage,
+  addToCart,
+}) => {
+  const { slug } = useParams();
   const [loading, setLoading] = useState(true);
+  const [item, setItem] = useState(null);
+
+  // Find product by slug
+  useEffect(() => {
+    if (cameraList || accessoryList) {
+      // Search in both camera and accessory lists
+      const allProducts = [...(cameraList || []), ...(accessoryList || [])];
+      const foundItem = allProducts.find(
+        (product) => product.name.toLowerCase().replace(/\s+/g, "-") === slug
+      );
+
+      setItem(foundItem);
+
+      // Simulate loading effect
+      const timer = setTimeout(() => setLoading(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [slug, cameraList, accessoryList]);
 
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // Simulate loading effect when item changes
-  useEffect(() => {
-    if (item) {
-      const timer = setTimeout(() => setLoading(false), 200);
-      return () => clearTimeout(timer);
-    }
-  }, [item]);
 
   const [timeLeft, setTimeLeft] = useState(0);
 
@@ -70,6 +87,15 @@ const ProductDetail = ({ item, setActivePage, addToCart }) => {
 
   return (
     <>
+      <Helmet>
+        <title>{item.name} Rental in Bengaluru | RentMyCam</title>
+        <meta
+          name="description"
+          content={`Rent ${item.name} in Bengaluru at affordable prices. Book now at RentMyCam!`}
+        />
+        <link rel="canonical" href={`https://rentmycam.in/product/${slug}`} />
+      </Helmet>
+
       <div className="max-w-7xl mx-auto p-4 md:p-12 my-0 md:my-10 bg-white rounded-none md:rounded-lg border-0 md:border border-slate-200 shadow-none md:shadow-sm font-inter transition-all duration-500 pb-32 md:pb-">
         {/* Back Button */}
         <Link to={isCamera ? "/cameras" : "/accessories"}>
@@ -96,7 +122,6 @@ const ProductDetail = ({ item, setActivePage, addToCart }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Product Image */}
-          {/* Product Image */}
           <div
             className="relative mx-auto transform transition-transform duration-500 hover:scale-105
                 w-3/4 sm:w-2/3 md:w-full max-w-xs sm:max-w-sm md:max-w-md"
@@ -104,7 +129,7 @@ const ProductDetail = ({ item, setActivePage, addToCart }) => {
             <div className="w-full aspect-square relative">
               <img
                 src={item.image}
-                alt={item.name}
+                alt={`${item.name} camera rental in Bengaluru`}
                 className="absolute inset-0 w-full h-full object-cover object-center rounded-md md:rounded-lg"
                 onError={(e) => {
                   e.target.onerror = null;
