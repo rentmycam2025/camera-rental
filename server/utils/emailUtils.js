@@ -1,31 +1,17 @@
 // utils/emailUtils.js
 require("dotenv").config();
-// const SibApiV3Sdk = require("sib-api-v3-sdk");
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const {
   calculateBookingTotal,
   generateDetailedWhatsAppMessage,
 } = require("./bookingUtils");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.hostinger.com",
-  port: 587,
-  secure: false, // true for 465
-  auth: {
-    user: process.env.EMAIL_USER, // hello@rentmycam.in
-    pass: process.env.EMAIL_PASSWORD, // email password or app password
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 15000,
-});
 // Initialize Brevo API client
-// const defaultClient = SibApiV3Sdk.ApiClient.instance;
-// const apiKey = defaultClient.authentications["api-key"];
-// apiKey.apiKey = process.env.BREVO_API_KEY;
-// const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+const apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 const generateWhatsAppLink = (contact, booking) => {
   const message = generateDetailedWhatsAppMessage(booking);
@@ -245,318 +231,41 @@ const prepareEmailAttachments = (files) => {
   return attachments;
 };
 
-// const sendBookingEmail = async (booking, files) => {
-//   try {
-//     const emailTemplate = generateBookingEmailTemplate(booking, files);
-//     const attachments = prepareEmailAttachments(files);
-
-//     const sendSmtpEmail = {
-//       sender: {
-//         name: process.env.BRAND_NAME || "Rent My Cam",
-//         email: process.env.EMAIL_USER,
-//       },
-//       to: [
-//         {
-//           email: process.env.ADMIN_EMAIL,
-//           name: "Admin",
-//         },
-//       ],
-//       subject: emailTemplate.subject,
-//       htmlContent: emailTemplate.html,
-//       attachment: attachments,
-//     };
-
-//     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-//     console.log("Admin email sent successfully via Brevo:", data);
-//     return true;
-//   } catch (error) {
-//     console.error("Error sending email via Brevo:", error);
-//     throw error;
-//   }
-// };
-
 const sendBookingEmail = async (booking, files) => {
   try {
     const emailTemplate = generateBookingEmailTemplate(booking, files);
     const attachments = prepareEmailAttachments(files);
 
-    const info = await transporter.sendMail({
-      from: `"${process.env.BRAND_NAME || "Rent My Cam"}" <${
-        process.env.EMAIL_USER
-      }>`,
-      to: process.env.ADMIN_EMAIL,
+    const sendSmtpEmail = {
+      sender: {
+        name: process.env.BRAND_NAME || "Rent My Cam",
+        email: process.env.EMAIL_USER,
+      },
+      to: [
+        {
+          email: process.env.ADMIN_EMAIL,
+          name: "Admin",
+        },
+      ],
       subject: emailTemplate.subject,
-      html: emailTemplate.html,
-      attachments: attachments.map((a) => ({
-        filename: a.name,
-        content: Buffer.from(a.content, "base64"),
-        cid: a.contentId,
-      })),
-    });
+      htmlContent: emailTemplate.html,
+      attachment: attachments,
+    };
 
-    console.log("Admin email sent successfully via Hostinger:", info.messageId);
+    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("Admin email sent successfully via Brevo:", data);
     return true;
   } catch (error) {
-    console.error("Error sending email via Hostinger SMTP:", error);
+    console.error("Error sending email via Brevo:", error);
     throw error;
   }
 };
 
 // Customer confirmation email with similar design
-// const sendCustomerConfirmationEmail = async (booking) => {
-//   try {
-//     const { totalAmount } = calculateBookingTotal(booking);
-
-//     const simpleEmailHtml = `<!DOCTYPE html>
-//                               <html lang="en">
-//                               <head>
-//                                   <meta charset="UTF-8">
-//                                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-//                                   <title>Booking Confirmation</title>
-//                                   <style>
-//                                       /* Reset */
-//                                       * {
-//                                           margin: 0;
-//                                           padding: 0;
-//                                           box-sizing: border-box;
-//                                       }
-
-//                                       body {
-//                                           margin: 0;
-//                                           padding: 0;
-//                                           font-family: 'Inter', Arial, sans-serif;
-//                                           background-color: #f5f5f5;
-//                                           color: #1f2937;
-//                                           line-height: 1.5;
-//                                           -webkit-text-size-adjust: 100%;
-//                                           -ms-text-size-adjust: 100%;
-//                                       }
-
-//                                       /* Container */
-//                                       .container {
-//                                           max-width: 600px;
-//                                           margin: 0 auto;
-//                                           background: #ffffff;
-//                                           border-radius: 12px;
-//                                           overflow: hidden;
-//                                           padding: 40px 30px;
-//                                           box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-//                                           text-align: center;
-//                                       }
-
-//                                       /* Logo */
-//                                       .logo {
-//                                           max-width: 120px;
-//                                           margin-bottom: 25px;
-//                                           display: block;
-//                                           margin-left: auto;
-//                                           margin-right: auto;
-//                                       }
-
-//                                       /* Typography */
-//                                       h2 {
-//                                           color: #F97316;
-//                                           font-size: 26px;
-//                                           font-weight: 700;
-//                                           margin-bottom: 15px;
-//                                       }
-
-//                                       p {
-//                                           font-size: 16px;
-//                                           color: #374151;
-//                                           margin-bottom: 15px;
-//                                       }
-
-//                                       .highlight {
-//                                           font-weight: 600;
-//                                           color: #F97316;
-//                                       }
-
-//                                       /* Contact Section */
-//                                       .contact {
-//                                           display: flex;
-//                                           justify-content: center;
-//                                           gap: 20px;
-//                                           margin: 25px 0;
-//                                           flex-wrap: wrap;
-//                                       }
-
-//                                       .contact-item {
-//                                           display: flex;
-//                                           align-items: center;
-//                                           gap: 10px;
-//                                           padding: 12px 20px;
-//                                           border-radius: 8px;
-//                                           background-color: #F9FAFB;
-//                                           text-decoration: none;
-//                                           color: #1f2937;
-//                                           font-weight: 500;
-//                                           transition: all 0.2s ease-in-out;
-//                                           min-width: 140px;
-//                                           justify-content: center;
-//                                       }
-
-//                                       .contact-item img {
-//                                           width: 24px;
-//                                           height: 24px;
-//                                       }
-
-//                                       .contact-item:hover {
-//                                           background-color: #F97316;
-//                                           color: #ffffff;
-//                                       }
-
-//                                       .contact-item:hover img {
-//                                           filter: brightness(0) invert(1);
-//                                       }
-
-//                                       /* Footer */
-//                                       .footer {
-//                                           font-size: 12px;
-//                                           color: #9ca3af;
-//                                           margin-top: 30px;
-//                                       }
-
-//                                       /* Price Box */
-//                                       .price-box {
-//                                           background-color: #FFF7ED;
-//                                           border-radius: 8px;
-//                                           padding: 15px;
-//                                           margin: 20px 0;
-//                                           border-left: 4px solid #F97316;
-//                                       }
-
-//                                       .price-amount {
-//                                           font-size: 22px;
-//                                           font-weight: 700;
-//                                           color: #F97316;
-//                                       }
-
-//                                       /* Divider */
-//                                       .divider {
-//                                           height: 1px;
-//                                           background-color: #E5E7EB;
-//                                           margin: 25px 0;
-//                                       }
-
-//                                       /* Responsive */
-//                                       @media only screen and (max-width: 480px) {
-//                                           .container {
-//                                               padding: 25px 20px;
-//                                               margin: 10px;
-//                                               border-radius: 8px;
-//                                           }
-
-//                                           h2 {
-//                                               font-size: 22px;
-//                                           }
-
-//                                           p, .contact-item {
-//                                               font-size: 15px;
-//                                           }
-
-//                                           .contact {
-//                                               flex-direction: column;
-//                                               align-items: center;
-//                                               gap: 12px;
-//                                           }
-
-//                                           .contact-item {
-//                                               width: 100%;
-//                                               max-width: 220px;
-//                                           }
-
-//                                           .price-amount {
-//                                               font-size: 20px;
-//                                           }
-//                                       }
-
-//                                       /* For email clients that don't support media queries */
-//                                       @media only screen and (max-width: 480px) {
-//                                           table.container {
-//                                               width: 100% !important;
-//                                           }
-//                                       }
-//                                   </style>
-//                               </head>
-//                               <body>
-//                                   <div class="container">
-//                                       <img class="logo" src="https://res.cloudinary.com/dhqhk1k3t/image/upload/v1760359478/logo_dark_d7ik7y.png" alt="Logo">
-//                                       <h2>Booking Confirmed!</h2>
-//                                       <p>Hello <span class="highlight">${
-//                                         booking.fullName
-//                                       }</span>,</p>
-//                                       <p>Your rental booking has been successfully confirmed.</p>
-//                                       <p>Our team will call or message you within a few hours to finalize the next steps.</p>
-
-//                                       <div class="price-box">
-//                                           <p>Total Rental Price</p>
-//                                           <div class="price-amount">₹${totalAmount.toLocaleString()}</div>
-//                                       </div>
-
-//                                       <!-- Contact Section -->
-//                                       <div class="contact">
-//                                           <!-- Call Us -->
-//                                           <a href="tel:${
-//                                             process.env.CONTACT_NUMBER
-//                                           }" class="contact-item">
-//                                               <img src="https://img.icons8.com/?size=100&id=I24lanX6Nq71&format=png&color=000000" alt="Phone Icon">
-//                                               Call Us
-//                                           </a>
-
-//                                           <!-- WhatsApp Us -->
-//                                           <a href="https://wa.me/${
-//                                             process.env.WHATSAPP_NUMBER
-//                                           }" class="contact-item">
-//                                               <img src="https://img.icons8.com/?size=100&id=16713&format=png&color=000000" alt="WhatsApp Icon">
-//                                               WhatsApp Us
-//                                           </a>
-//                                       </div>
-
-//                                       <div class="divider"></div>
-
-//                                       <p>Thank you for choosing <span class="highlight">${
-//                                         process.env.BRAND_NAME || "Your Company"
-//                                       }</span>!</p>
-//                                       <div class="footer">© ${new Date().getFullYear()} ${
-//       process.env.BRAND_NAME || "Your Company"
-//     }. All rights reserved.</div>
-//                                   </div>
-//                               </body>
-//                               </html>`;
-
-//     const sendSmtpEmail = {
-//       sender: {
-//         name: process.env.BRAND_NAME || "Rent My Cam",
-//         email: process.env.EMAIL_USER,
-//       },
-//       to: [
-//         {
-//           email: booking.email,
-//           name: booking.fullName,
-//         },
-//       ],
-//       subject: `Booking Confirmation - ${
-//         process.env.BRAND_NAME || "Our Company"
-//       }`,
-//       htmlContent: simpleEmailHtml,
-//     };
-
-//     const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-//     console.log(
-//       "Customer confirmation email sent successfully via Brevo:",
-//       data
-//     );
-//     return true;
-//   } catch (error) {
-//     console.error("Error sending customer email via Brevo:", error);
-//     throw error;
-//   }
-// };
-
 const sendCustomerConfirmationEmail = async (booking) => {
   try {
     const { totalAmount } = calculateBookingTotal(booking);
+
     const simpleEmailHtml = `<!DOCTYPE html>
                               <html lang="en">
                               <head>
@@ -775,24 +484,31 @@ const sendCustomerConfirmationEmail = async (booking) => {
                               </body>
                               </html>`;
 
-    const info = await transporter.sendMail({
-      from: `"${process.env.BRAND_NAME || "Rent My Cam"}" <${
-        process.env.EMAIL_USER
-      }>`,
-      to: booking.email,
+    const sendSmtpEmail = {
+      sender: {
+        name: process.env.BRAND_NAME || "Rent My Cam",
+        email: process.env.EMAIL_USER,
+      },
+      to: [
+        {
+          email: booking.email,
+          name: booking.fullName,
+        },
+      ],
       subject: `Booking Confirmation - ${
         process.env.BRAND_NAME || "Our Company"
       }`,
-      html: simpleEmailHtml,
-    });
+      htmlContent: simpleEmailHtml,
+    };
 
+    const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log(
-      "Customer email sent successfully via Hostinger:",
-      info.messageId
+      "Customer confirmation email sent successfully via Brevo:",
+      data
     );
     return true;
   } catch (error) {
-    console.error("Error sending customer email via Hostinger:", error);
+    console.error("Error sending customer email via Brevo:", error);
     throw error;
   }
 };
