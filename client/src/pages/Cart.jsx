@@ -1,6 +1,149 @@
-import React from "react";
+// src/pages/Cart.jsx
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
+// --- Subcomponents ---
+const CartItem = ({ item, updateCartQuantity, removeFromCart }) => {
+  const price = item.offerPrice || item.pricePerDay;
+  const itemTotal = price * item.quantity;
+
+  return (
+    <div className="bg-white p-5 rounded-xl shadow-lg flex flex-col sm:flex-row items-start transition duration-300 hover:shadow-xl border border-gray-100">
+      {/* Image */}
+      <img
+        src={item.image}
+        alt={`${item.name} cheap camera rental in Bengaluru`}
+        className="w-full sm:w-32 h-32 object-contain rounded-xl shrink-0 sm:mr-6 mb-4 sm:mb-0 border border-gray-200"
+      />
+
+      {/* Details and Controls */}
+      <div className="flex-grow w-full">
+        <div className="flex justify-between items-start mb-2">
+          {/* Name & Price per day */}
+          <div>
+            <h3 className="font-bold text-xl text-gray-900 leading-snug">
+              {item.name}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Daily Rate:{" "}
+              <span className="font-medium text-primary-500">
+                ₹{price.toLocaleString()}/day
+              </span>
+            </p>
+          </div>
+
+          {/* Remove Button (Desktop) */}
+          <button
+            onClick={() => removeFromCart(item._id)}
+            aria-label={`Remove ${item.name} from cart`}
+            className="hidden sm:block text-xs text-accent-error hover:text-red-700 transition font-medium"
+          >
+            Remove
+          </button>
+        </div>
+
+        {/* Quantity & Total */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 border-t pt-4">
+          <div className="flex items-center space-x-3 mb-4 md:mb-0">
+            <span className="text-sm font-medium text-gray-600 mr-2">
+              Quantity:
+            </span>
+            <button
+              onClick={() => updateCartQuantity(item._id, item.quantity - 1)}
+              className="bg-gray-100 border border-gray-300 text-gray-800 w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition disabled:opacity-50"
+              disabled={item.quantity <= 1}
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M20 12H4"
+                />
+              </svg>
+            </button>
+            <span className="font-bold text-lg w-6 text-center text-gray-900">
+              {item.quantity}
+            </span>
+            <button
+              onClick={() => updateCartQuantity(item._id, item.quantity + 1)}
+              className="bg-gray-100 border border-gray-300 text-gray-800 w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div className="text-left md:text-right">
+            <p className="text-sm text-gray-600 mb-1">Item Subtotal:</p>
+            <p className="font-extrabold text-primary-600 text-2xl">
+              ₹{itemTotal.toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        {/* Remove Button (Mobile) */}
+        <button
+          onClick={() => removeFromCart(item._id)}
+          className="sm:hidden text-xs text-accent-error hover:text-red-700 transition font-medium mt-3"
+        >
+          Remove Item
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const CheckoutButton = ({ total, enabled, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full text-white font-black uppercase tracking-wider px-6 py-3 rounded-xl shadow-lg transition duration-300 flex items-center justify-center space-x-2 ${
+      enabled
+        ? "bg-primary-500 shadow-primary-500/50 hover:bg-primary-600"
+        : "bg-gray-400 text-gray-700 cursor-not-allowed opacity-70 shadow-none"
+    }`}
+    disabled={!enabled}
+  >
+    {enabled ? (
+      <>
+        <span>Proceed to Checkout (₹{total.toLocaleString()})</span>
+        <svg
+          className="w-5 h-5 ml-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M13 9l3 3m0 0l-3 3m3-3H8M1 12a11 11 0 0122 0 11 11 0 01-22 0z"
+          />
+        </svg>
+      </>
+    ) : (
+      <span>Select Rental Period</span>
+    )}
+  </button>
+);
+
+// --- Main Cart Component ---
 const Cart = ({
   cart,
   updateCartQuantity,
@@ -12,14 +155,17 @@ const Cart = ({
   numberOfDays,
   subtotal,
 }) => {
-  // Constants for calculation and display
-  const estimatedTotal = subtotal * numberOfDays;
-  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  // Helper for current date to set minimum date for inputs
   const today = new Date().toISOString().split("T")[0];
 
-  // --- Empty Cart State ---
+  const cartItemCount = useMemo(
+    () => cart.reduce((sum, item) => sum + item.quantity, 0),
+    [cart]
+  );
+  const estimatedTotal = useMemo(
+    () => subtotal * numberOfDays,
+    [subtotal, numberOfDays]
+  );
+
   if (cart.length === 0) {
     return (
       <div className="max-w-3xl mx-auto p-10 my-16 text-center bg-white rounded-3xl shadow-2xl border-b-8 border-primary-500/80">
@@ -56,17 +202,12 @@ const Cart = ({
     );
   }
 
-  // --- Cart Content View ---
   return (
     <>
-      {" "}
-      {/* Use fragment to allow for the fixed footer */}
       <div className="max-w-7xl mx-auto p-4 md:p-8 my-10 font-sans">
-        {/* Header */}
         <h2 className="text-4xl font-extrabold text-gray-900 mb-10 pb-4 border-b border-gray-200 flex justify-between items-center">
           <span className="tracking-tight">
-            Review Your Gear{" "}
-            <span className="text-primary-500">({cartItemCount})</span>
+            Review Your Gear ({cartItemCount})
           </span>
           <button
             onClick={clearCart}
@@ -89,138 +230,28 @@ const Cart = ({
           </button>
         </h2>
 
-        {/* Added pb-20 to ensure content isn't hidden behind the fixed footer on mobile */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20 lg:pb-0">
-          {/* Cart Items List (2/3 width on desktop) */}
+          {/* Cart Items */}
           <div className="lg:col-span-2 space-y-5">
-            {cart.map((item) => {
-              const price = item.offerPrice || item.pricePerDay;
-              const itemTotal = price * item.quantity;
-              return (
-                <div
-                  key={item._id}
-                  className="bg-white p-5 rounded-xl shadow-lg flex flex-col sm:flex-row items-start transition duration-300 hover:shadow-xl border border-gray-100"
-                >
-                  {/* Image */}
-                  <img
-                    src={item.image}
-                    alt={`${item.name}} cheap camera rental in Bengaluru`}
-                    className="w-full sm:w-32 h-32 object-contain rounded-xl shrink-0 sm:mr-6 mb-4 sm:mb-0 border border-gray-200"
-                  />
-
-                  {/* Details and Controls */}
-                  <div className="flex-grow w-full">
-                    <div className="flex justify-between items-start mb-2">
-                      {/* Name & Price per day */}
-                      <div>
-                        <h3 className="font-bold text-xl text-gray-900 leading-snug">
-                          {item.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Daily Rate:{" "}
-                          <span className="font-medium text-primary-500">
-                            ₹{price.toLocaleString()}/day
-                          </span>
-                        </p>
-                      </div>
-
-                      {/* Remove Button (Desktop Top Right) */}
-                      <button
-                        onClick={() => removeFromCart(item._id)}
-                        className="hidden sm:block text-xs text-accent-error hover:text-red-700 transition font-medium"
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    {/* Quantity and Total (Responsive Layout) */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between mt-4 border-t pt-4">
-                      {/* Quantity Selector */}
-                      <div className="flex items-center space-x-3 mb-4 md:mb-0">
-                        <span className="text-sm font-medium text-gray-600 mr-2">
-                          Quantity:
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateCartQuantity(item._id, item.quantity - 1)
-                          }
-                          className="bg-gray-100 border border-gray-300 text-gray-800 w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition disabled:opacity-50"
-                          disabled={item.quantity <= 1}
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M20 12H4"
-                            />
-                          </svg>
-                        </button>
-                        <span className="font-bold text-lg w-6 text-center text-gray-900">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateCartQuantity(item._id, item.quantity + 1)
-                          }
-                          className="bg-gray-100 border border-gray-300 text-gray-800 w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-
-                      {/* Item Total */}
-                      <div className="text-left md:text-right">
-                        <p className="text-sm text-gray-600 mb-1">
-                          Item Subtotal:
-                        </p>
-                        <p className="font-extrabold text-primary-600 text-2xl">
-                          ₹{itemTotal.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Remove Button (Mobile Bottom) */}
-                    <button
-                      onClick={() => removeFromCart(item._id)}
-                      className="sm:hidden text-xs text-accent-error hover:text-red-700 transition font-medium mt-3"
-                    >
-                      Remove Item
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {cart.map((item) => (
+              <CartItem
+                key={item._id}
+                item={item}
+                updateCartQuantity={updateCartQuantity}
+                removeFromCart={removeFromCart}
+              />
+            ))}
           </div>
 
-          {/* Summary Card (1/3 width on desktop) */}
+          {/* Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white p-6 rounded-2xl shadow-xl shadow-gray-300 h-fit sticky top-4 lg:top-8 border-t-4 border-primary-500 space-y-6">
-              {/* Rental Period Selection */}
+              {/* Rental Period */}
               <div className="space-y-4 pb-4 border-b border-gray-100">
                 <h3 className="text-2xl font-bold text-gray-900">
                   Rental Period
                 </h3>
-
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Start Date */}
                   <div>
                     <label
                       htmlFor="startDate"
@@ -238,8 +269,6 @@ const Cart = ({
                       className="w-full border border-gray-300 p-3 rounded-xl bg-gray-50 text-gray-900 focus:ring-primary-500 focus:border-primary-500 transition"
                     />
                   </div>
-
-                  {/* End Date */}
                   <div>
                     <label
                       htmlFor="endDate"
@@ -258,8 +287,6 @@ const Cart = ({
                     />
                   </div>
                 </div>
-
-                {/* Rental Days Display */}
                 {numberOfDays > 0 && (
                   <p className="text-lg font-bold text-gray-800 pt-2 text-center">
                     Total Days:{" "}
@@ -280,7 +307,6 @@ const Cart = ({
                 <h3 className="text-2xl font-bold text-gray-900 pb-1">
                   Order Summary
                 </h3>
-
                 <div className="space-y-3 text-gray-700">
                   <div className="flex justify-between text-base">
                     <span className="font-medium">Daily Subtotal:</span>
@@ -308,85 +334,32 @@ const Cart = ({
                   </div>
                 </div>
 
-                {/* Checkout Button (DESKTOP ONLY - hidden on mobile) */}
-                <Link to="/booking">
-                  <button
-                    onClick={() => setActivePage("booking")}
-                    className={`hidden lg:flex mt-6 w-full text-white font-black uppercase tracking-wider px-6 py-4 rounded-xl shadow-lg transition duration-300 transform hover:scale-[1.01] items-center justify-center space-x-2 ${
-                      numberOfDays > 0
-                        ? "bg-primary-500 shadow-primary-500/50 hover:bg-primary-600"
-                        : "bg-gray-400 text-gray-700 cursor-not-allowed opacity-70 shadow-none"
-                    }`}
-                    disabled={numberOfDays === 0}
-                  >
-                    {numberOfDays > 0 ? (
-                      <>
-                        <span>Proceed to Checkout</span>
-                        <svg
-                          className="w-5 h-5 ml-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 9l3 3m0 0l-3 3m3-3H8M1 12a11 11 0 0122 0 11 11 0 01-22 0z"
-                          />
-                        </svg>
-                      </>
-                    ) : (
-                      <span>Select Rental Period</span>
-                    )}
-                  </button>
-                </Link>
+                {/* Desktop Checkout */}
+                <div className="hidden lg:block mt-6">
+                  <Link to="/booking">
+                    <CheckoutButton
+                      total={estimatedTotal}
+                      enabled={numberOfDays > 0}
+                      onClick={() => setActivePage("booking")}
+                    />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* --- Mobile Fixed Checkout Bar (Visible ONLY on screens < lg) --- */}
+
+      {/* Mobile Checkout */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-2xl z-50">
         <Link to="/booking">
-          <button
+          <CheckoutButton
+            total={estimatedTotal}
+            enabled={numberOfDays > 0}
             onClick={() => setActivePage("booking")}
-            className={`w-full text-white font-black uppercase tracking-wider px-6 py-3 rounded-xl shadow-lg transition duration-300 flex items-center justify-center space-x-2 ${
-              numberOfDays > 0
-                ? "bg-primary-500 shadow-primary-500/50 hover:bg-primary-600"
-                : "bg-gray-400 text-gray-700 cursor-not-allowed opacity-70 shadow-none"
-            }`}
-            disabled={numberOfDays === 0}
-          >
-            {numberOfDays > 0 ? (
-              <>
-                {/* Shows the calculated total right in the button */}
-                <span>
-                  Proceed to Checkout (₹{estimatedTotal.toLocaleString()})
-                </span>
-                <svg
-                  className="w-5 h-5 ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 9l3 3m0 0l-3 3m3-3H8M1 12a11 11 0 0122 0 11 11 0 01-22 0z"
-                  />
-                </svg>
-              </>
-            ) : (
-              <span>Select Rental Period</span>
-            )}
-          </button>
+          />
         </Link>
       </div>
-      {/* --------------------------------- */}
     </>
   );
 };

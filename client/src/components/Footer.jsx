@@ -15,6 +15,7 @@ const Footer = () => (
       {/* Logo & About */}
       <div className="flex flex-col items-start md:items-start">
         <img
+          loading="lazy"
           src={BRAND_CONFIG.logoWhite}
           alt="Company Logo"
           className="h-12 mb-3"

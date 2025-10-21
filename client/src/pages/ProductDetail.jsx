@@ -128,6 +128,7 @@ const ProductDetail = ({
           >
             <div className="w-full aspect-square relative">
               <img
+                loading="lazy"
                 src={item.image}
                 alt={`${item.name} camera rental in Bengaluru`}
                 className="absolute inset-0 w-full h-full object-cover object-center rounded-md md:rounded-lg"

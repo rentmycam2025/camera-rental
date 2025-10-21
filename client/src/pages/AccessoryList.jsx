@@ -1,9 +1,10 @@
-import React from "react";
-import ProductCard from "../components/ProductCard";
-import Loader from "../components/Loader";
+import React, { Suspense, lazy } from "react";
+import Loader from "../components/Loader"; // normal import
+
+// Lazy-load heavy component
+const ProductCard = lazy(() => import("../components/ProductCard"));
 
 const AccessoryList = ({ accessoryList, isLoading, onViewDetail }) => {
-  // Ensure accessoryList is always an array
   const safeAccessoryList = Array.isArray(accessoryList) ? accessoryList : [];
 
   return (
@@ -21,15 +22,23 @@ const AccessoryList = ({ accessoryList, isLoading, onViewDetail }) => {
           No accessories available at the moment.
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-          {safeAccessoryList.map((item) => (
-            <ProductCard
-              key={item._id}
-              item={item}
-              onViewDetail={onViewDetail}
-            />
-          ))}
-        </div>
+        <Suspense
+          fallback={
+            <div className="text-center text-xl text-gray-500 py-8">
+              <Loader />
+            </div>
+          }
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            {safeAccessoryList.map((item) => (
+              <ProductCard
+                key={item._id}
+                item={item}
+                onViewDetail={onViewDetail}
+              />
+            ))}
+          </div>
+        </Suspense>
       )}
     </section>
   );

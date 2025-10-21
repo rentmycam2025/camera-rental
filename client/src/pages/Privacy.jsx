@@ -1,8 +1,15 @@
 // src/pages/Privacy.jsx
-import React from "react";
-import MarkdownPage from "../components/MarkdownPage";
+import React, { Suspense } from "react";
+import Loader from "../components/Loader";
 import { privacyContent } from "../data/privacyData";
 
-const Privacy = () => <MarkdownPage content={privacyContent} />;
+// Lazy load MarkdownPage
+const MarkdownPage = React.lazy(() => import("../components/MarkdownPage"));
+
+const Privacy = () => (
+  <Suspense fallback={<Loader />}>
+    <MarkdownPage content={privacyContent} />
+  </Suspense>
+);
 
 export default Privacy;

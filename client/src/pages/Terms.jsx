@@ -1,8 +1,15 @@
 // src/pages/Terms.jsx
-import React from "react";
-import MarkdownPage from "../components/MarkdownPage";
+import React, { Suspense } from "react";
+import Loader from "../components/Loader";
 import { termsContent } from "../data/termsData";
 
-const Terms = () => <MarkdownPage content={termsContent} />;
+// Lazy load MarkdownPage
+const MarkdownPage = React.lazy(() => import("../components/MarkdownPage"));
+
+const Terms = () => (
+  <Suspense fallback={<Loader />}>
+    <MarkdownPage content={termsContent} />
+  </Suspense>
+);
 
 export default Terms;

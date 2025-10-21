@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /cart
+
+# Allow main product pages
+Allow: /cameras
+Allow: /accessories
+
+# Sitemap
+Sitemap: https://rentmycam.in/sitemap.xml

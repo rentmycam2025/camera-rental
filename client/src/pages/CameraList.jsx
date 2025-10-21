@@ -1,9 +1,10 @@
-import React from "react";
-import ProductCard from "../components/ProductCard";
+import React, { Suspense } from "react";
 import Loader from "../components/Loader";
 
+// Lazy-load ProductCard
+const ProductCard = React.lazy(() => import("../components/ProductCard"));
+
 const CameraList = ({ cameraList, isLoading, onViewDetail }) => {
-  // Ensure cameraList is always an array
   const safeCameraList = Array.isArray(cameraList) ? cameraList : [];
 
   return (
@@ -23,11 +24,9 @@ const CameraList = ({ cameraList, isLoading, onViewDetail }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {safeCameraList.map((item) => (
-            <ProductCard
-              key={item._id}
-              item={item}
-              onViewDetail={onViewDetail}
-            />
+            <Suspense key={item._id} fallback={<Loader />}>
+              <ProductCard item={item} onViewDetail={onViewDetail} />
+            </Suspense>
           ))}
         </div>
       )}

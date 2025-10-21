@@ -112,6 +112,7 @@ const Navbar = ({
               className="text-2xl font-extrabold text-primary-500 hover:text-primary-600 transition duration-300 tracking-wide"
             >
               <img
+                loading="lazy"
                 src={BRAND_CONFIG.logo}
                 alt={BRAND_CONFIG.name}
                 className="h-8 w-auto"
@@ -236,6 +237,7 @@ const Navbar = ({
               className="text-xl font-extrabold text-primary-500 hover:text-primary-600 transition duration-300 tracking-wide"
             >
               <img
+                loading="lazy"
                 src={BRAND_CONFIG.logo}
                 alt={BRAND_CONFIG.name}
                 className="h-8 w-auto"

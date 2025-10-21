@@ -69,6 +69,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                     <div className="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300">
                       {item.image ? (
                         <img
+                          loading="lazy"
                           src={item.image}
                           alt={`${item.name}} camera rental in Bengaluru`}
                           className="w-full h-full object-cover"

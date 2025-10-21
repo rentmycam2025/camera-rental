@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, Suspense } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,16 +17,17 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Notification from "./components/Notification";
 import ScrollToTop from "./components/ScrollToTop";
+import Loader from "./components/Loader";
 
 // Pages
-import Home from "./pages/Home";
-import CameraList from "./pages/CameraList";
-import AccessoryList from "./pages/AccessoryList";
-import ProductDetail from "./pages/ProductDetail";
-import CartPage from "./pages/Cart";
-import BookingForm from "./pages/BookingForm";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
+const Home = React.lazy(() => import("./pages/Home"));
+const CameraList = React.lazy(() => import("./pages/CameraList"));
+const AccessoryList = React.lazy(() => import("./pages/AccessoryList"));
+const ProductDetail = React.lazy(() => import("./pages/ProductDetail"));
+const CartPage = React.lazy(() => import("./pages/Cart"));
+const BookingForm = React.lazy(() => import("./pages/BookingForm"));
+const Terms = React.lazy(() => import("./pages/Terms"));
+const Privacy = React.lazy(() => import("./pages/Privacy"));
 
 function AppContent() {
   const location = useLocation();
@@ -139,42 +141,49 @@ function AppContent() {
 
       <main className="flex-grow">
         <ScrollToTop />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                cameraList={cameraList}
-                accessoryList={accessoryList}
-                onViewDetail={handleViewDetail}
-                isLoading={isLoading}
-                setActivePage={setActivePage}
-              />
-            }
-          />
-          <Route
-            path="/cameras"
-            element={
-              <CameraList
-                cameraList={cameraList}
-                isLoading={isLoading}
-                onViewDetail={handleViewDetail}
-                setActivePage={setActivePage}
-              />
-            }
-          />
-          <Route
-            path="/accessories"
-            element={
-              <AccessoryList
-                accessoryList={accessoryList}
-                isLoading={isLoading}
-                onViewDetail={handleViewDetail}
-                setActivePage={setActivePage}
-              />
-            }
-          />
-          {/* <Route
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center text-center min-h-[90vh] py-10">
+              <Loader />
+            </div>
+          }
+        >
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  cameraList={cameraList}
+                  accessoryList={accessoryList}
+                  onViewDetail={handleViewDetail}
+                  isLoading={isLoading}
+                  setActivePage={setActivePage}
+                />
+              }
+            />
+            <Route
+              path="/cameras"
+              element={
+                <CameraList
+                  cameraList={cameraList}
+                  isLoading={isLoading}
+                  onViewDetail={handleViewDetail}
+                  setActivePage={setActivePage}
+                />
+              }
+            />
+            <Route
+              path="/accessories"
+              element={
+                <AccessoryList
+                  accessoryList={accessoryList}
+                  isLoading={isLoading}
+                  onViewDetail={handleViewDetail}
+                  setActivePage={setActivePage}
+                />
+              }
+            />
+            {/* <Route
             path="/product/:slug"
             element={
               <ProductDetail
@@ -184,51 +193,52 @@ function AppContent() {
               />
             }
           /> */}
-          <Route
-            path="/product/:slug"
-            element={
-              <ProductDetail
-                cameraList={cameraList}
-                accessoryList={accessoryList}
-                addToCart={addToCart}
-                setActivePage={setActivePage}
-              />
-            }
-          />
+            <Route
+              path="/product/:slug"
+              element={
+                <ProductDetail
+                  cameraList={cameraList}
+                  accessoryList={accessoryList}
+                  addToCart={addToCart}
+                  setActivePage={setActivePage}
+                />
+              }
+            />
 
-          <Route
-            path="/cart"
-            element={
-              <CartPage
-                cart={cart}
-                updateCartQuantity={updateCartQuantity}
-                removeFromCart={removeFromCart}
-                clearCart={clearCart}
-                rentalDates={rentalDates}
-                handleDateChange={handleDateChange}
-                numberOfDays={numberOfDays}
-                subtotal={subtotal}
-                setActivePage={setActivePage}
-              />
-            }
-          />
-          <Route
-            path="/booking"
-            element={
-              <BookingForm
-                cart={cart}
-                setNotification={setNotification}
-                setActivePage={setActivePage}
-                clearCart={clearCart}
-                numberOfDays={numberOfDays}
-                rentalDates={rentalDates}
-                subtotal={subtotal}
-              />
-            }
-          />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-        </Routes>
+            <Route
+              path="/cart"
+              element={
+                <CartPage
+                  cart={cart}
+                  updateCartQuantity={updateCartQuantity}
+                  removeFromCart={removeFromCart}
+                  clearCart={clearCart}
+                  rentalDates={rentalDates}
+                  handleDateChange={handleDateChange}
+                  numberOfDays={numberOfDays}
+                  subtotal={subtotal}
+                  setActivePage={setActivePage}
+                />
+              }
+            />
+            <Route
+              path="/booking"
+              element={
+                <BookingForm
+                  cart={cart}
+                  setNotification={setNotification}
+                  setActivePage={setActivePage}
+                  clearCart={clearCart}
+                  numberOfDays={numberOfDays}
+                  rentalDates={rentalDates}
+                  subtotal={subtotal}
+                />
+              }
+            />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />

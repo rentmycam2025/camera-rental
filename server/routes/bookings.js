@@ -69,6 +69,7 @@ router.get("/:id", authMiddleware, adminOnly, async (req, res) => {
 });
 
 // POST create booking
+// POST create booking
 router.post(
   "/",
   upload.fields([
@@ -80,19 +81,22 @@ router.post(
       console.log("Body:", req.body);
       console.log("Files:", req.files);
 
-      // Create booking data using utility function
+      // 1️⃣ Create booking data using utility function
       const bookingData = createBookingData(req.body, req.files);
 
-      // Create and save booking
-      const booking = new Booking(bookingData);
-      await booking.save();
+      // 2️⃣ Create booking in DB (single save)
+      let booking = await Booking.create(bookingData);
 
-      // Populate camera and accessory details
-      await booking.populate("cameras accessories");
+      // 3️⃣ Populate cameras and accessories once for total calculation & response
+      booking = await Booking.findById(booking._id).populate(
+        "cameras accessories"
+      );
 
-      // Calculate and update total amount
+      // 4️⃣ Calculate total amount
       const { totalAmount } = calculateBookingTotal(booking);
       booking.totalAmount = totalAmount;
+
+      // 5️⃣ Save updated total
       await booking.save();
 
       console.log("Booking created successfully:", {
@@ -101,15 +105,15 @@ router.post(
         total: booking.totalAmount,
       });
 
-      // Send email notifications (non-blocking) via Brevo API
+      // 6️⃣ Send emails asynchronously (non-blocking)
       sendBookingEmail(booking, req.files).catch((err) =>
         console.error("Admin email sending failed:", err)
       );
-
       sendCustomerConfirmationEmail(booking).catch((err) =>
         console.error("Customer email sending failed:", err)
       );
 
+      // 7️⃣ Send response immediately
       res.status(201).json({
         success: true,
         message: "Booking created successfully",
