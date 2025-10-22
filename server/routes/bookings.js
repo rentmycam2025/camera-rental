@@ -105,13 +105,13 @@ router.post(
         total: booking.totalAmount,
       });
 
-      // 6️⃣ Send emails asynchronously (non-blocking)
-      sendBookingEmail(booking, req.files).catch((err) =>
-        console.error("Admin email sending failed:", err)
-      );
-      sendCustomerConfirmationEmail(booking).catch((err) =>
-        console.error("Customer email sending failed:", err)
-      );
+      // // 6️⃣ Send emails asynchronously (non-blocking)
+      // sendBookingEmail(booking, req.files).catch((err) =>
+      //   console.error("Admin email sending failed:", err)
+      // );
+      // sendCustomerConfirmationEmail(booking).catch((err) =>
+      //   console.error("Customer email sending failed:", err)
+      // );
 
       // 7️⃣ Send response immediately
       res.status(201).json({
@@ -119,6 +119,15 @@ router.post(
         message: "Booking created successfully",
         booking: booking,
         whatsappMessage: generateDetailedWhatsAppMessage(booking),
+      });
+      // Then send emails asynchronously
+      setImmediate(() => {
+        sendBookingEmail(booking, req.files).catch((err) =>
+          console.error("Admin email failed:", err)
+        );
+        sendCustomerConfirmationEmail(booking).catch((err) =>
+          console.error("Customer email failed:", err)
+        );
       });
     } catch (err) {
       console.error("Booking creation error:", err);

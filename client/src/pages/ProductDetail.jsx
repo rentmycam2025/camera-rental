@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import Loader from "../components/Loader";
 
 const ProductDetail = ({
@@ -15,9 +15,13 @@ const ProductDetail = ({
 
   // Find product by slug
   useEffect(() => {
-    if (cameraList || accessoryList) {
-      // Search in both camera and accessory lists
+    if (!cameraList && !accessoryList) return; // wait until lists are available
+
+    const fetchItem = async () => {
+      // Combine camera and accessory lists
       const allProducts = [...(cameraList || []), ...(accessoryList || [])];
+
+      // Find product by slug
       const foundItem = allProducts.find(
         (product) => product.name.toLowerCase().replace(/\s+/g, "-") === slug
       );
@@ -25,9 +29,10 @@ const ProductDetail = ({
       setItem(foundItem);
 
       // Simulate loading effect
-      const timer = setTimeout(() => setLoading(false), 200);
-      return () => clearTimeout(timer);
-    }
+      setTimeout(() => setLoading(false), 200);
+    };
+
+    fetchItem();
   }, [slug, cameraList, accessoryList]);
 
   // Scroll to top on page load
@@ -64,8 +69,11 @@ const ProductDetail = ({
   if (loading) return <Loader className="h-[100vh]" />;
 
   if (!item) {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 2000);
+
     return (
-      <div className="max-w-7xl mx-auto p-8 my-10 text-center text-xl font-medium text-slate-500">
+      <div className="h-[100vh] max-w-7xl mx-auto p-8 my-10 text-center text-xl font-medium text-slate-500">
         Product not found.
       </div>
     );
@@ -88,12 +96,50 @@ const ProductDetail = ({
   return (
     <>
       <Helmet>
-        <title>{item.name} Rental in Bengaluru | RentMyCam</title>
+        {/* SEO Title & Description */}
+        <title>
+          Rent {item.name} in Bengaluru | Best Camera Rental | RentMyCam
+        </title>
         <meta
           name="description"
-          content={`Rent ${item.name} in Bengaluru at affordable prices. Book now at RentMyCam!`}
+          content={`Rent ${item.brand || "Camera"} ${
+            item.name
+          } in Bengaluru for just ₹${
+            item.offerPrice || item.pricePerDay
+          }/day. Affordable camera rental under ₹${
+            item.offerPrice || item.pricePerDay
+          }. Book now at RentMyCam!`}
         />
+        <meta
+          name="keywords"
+          content={`camera rental Bengaluru, ${item.brand || ""} ${
+            item.name
+          }, ${item.brand || ""} camera under ₹${
+            item.pricePerDay
+          }, affordable camera rent`}
+        />
+
         <link rel="canonical" href={`https://rentmycam.in/product/${slug}`} />
+
+        {/* Structured Data for Product */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: item.name,
+            image: item.image,
+            description: item.description,
+            brand: { "@type": "Brand", name: item.brand || "RentMyCam" },
+            offers: {
+              "@type": "Offer",
+              url: `https://rentmycam.in/product/${slug}`,
+              priceCurrency: "INR",
+              price: item.offerPrice || item.pricePerDay,
+              availability: "https://schema.org/InStock",
+            },
+            priceRange: `₹${item.offerPrice || item.pricePerDay}`,
+          })}
+        </script>
       </Helmet>
 
       <div className="max-w-7xl mx-auto p-4 md:p-12 my-0 md:my-10 bg-white rounded-none md:rounded-lg border-0 md:border border-slate-200 shadow-none md:shadow-sm font-inter transition-all duration-500 pb-32 md:pb-">

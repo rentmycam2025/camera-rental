@@ -20,6 +20,7 @@ const Navbar = ({
   const [showResults, setShowResults] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const [showSearchInput, setShowSearchInput] = useState(false);
 
   const searchRef = useRef(null);
 
@@ -93,7 +94,8 @@ const Navbar = ({
     (item) =>
       item.page === "home" ||
       item.page === "cameras" ||
-      item.page === "accessories"
+      item.page === "accessories" ||
+      item.page === "privacy"
   );
   const rightNavItems = filteredNavItems.filter((item) => item.page === "cart");
   const bookNowItem = filteredNavItems.find((item) => item.page === "book-now");
@@ -220,6 +222,7 @@ const Navbar = ({
 
         {/* Mobile Layout */}
         <div className="md:hidden flex justify-between items-center h-16">
+          {/* Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
@@ -231,6 +234,7 @@ const Navbar = ({
             )}
           </button>
 
+          {/* Logo */}
           <Link to="/">
             <button
               onClick={() => setActivePage("home")}
@@ -245,43 +249,62 @@ const Navbar = ({
             </button>
           </Link>
 
-          <Link to="/cart">
-            <button className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative">
-              <FiShoppingCart />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold bg-accent-error rounded-full text-white ring-2 ring-white min-w-[18px] flex items-center justify-center">
-                  {cartCount}
-                </span>
+          {/* Cart + Search Icons */}
+          <div className="flex items-center space-x-2">
+            {/* Search Button */}
+            <button
+              onClick={() => setShowSearchInput(!showSearchInput)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            >
+              {showSearchInput ? (
+                <FiX className="h-6 w-6" />
+              ) : (
+                <FiSearch className="h-6 w-6" />
               )}
             </button>
-          </Link>
+
+            {/* Cart Button */}
+            <Link to="/cart">
+              <button className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 relative">
+                <FiShoppingCart />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold bg-accent-error rounded-full text-white ring-2 ring-white min-w-[18px] flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            </Link>
+          </div>
+
+          {/* Search Input Dropdown */}
+          {showSearchInput && (
+            <div className="absolute top-16 left-0 right-0 px-4 py-2 bg-white shadow-md z-50">
+              <input
+                type="text"
+                placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={handleFocus}
+                className="pl-10 text-black pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full text-sm"
+              />
+              <FiSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
+
+              {showResults && (
+                <SearchResults
+                  query={searchQuery}
+                  results={searchResults}
+                  isLoading={isSearching}
+                  onSelect={handleSearchSelect}
+                />
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Dropdown */}
         {isOpen && (
           <div className="md:hidden bg-white shadow-xl border-t border-gray-200">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
-              <div className="px-4 py-2 relative">
-                <input
-                  type="text"
-                  placeholder={SEARCH_PLACEHOLDERS[placeholderIndex]}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={handleFocus}
-                  className="pl-10 text-black  pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full text-sm"
-                />
-                <FiSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400" />
-
-                {showResults && (
-                  <SearchResults
-                    query={searchQuery}
-                    results={searchResults}
-                    isLoading={isSearching}
-                    onSelect={handleSearchSelect}
-                  />
-                )}
-              </div>
-
               {leftNavItems.map((item) => (
                 <Link
                   to={item.page === "home" ? "/" : `/${item.page}`}

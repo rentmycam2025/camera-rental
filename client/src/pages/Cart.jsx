@@ -1,6 +1,7 @@
 // src/pages/Cart.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 // --- Subcomponents ---
 const CartItem = ({ item, updateCartQuantity, removeFromCart }) => {
@@ -204,6 +205,17 @@ const Cart = ({
 
   return (
     <>
+      <Helmet>
+        <title>Cart - Rent My Cam</title>
+        <meta
+          name="description"
+          content={`Review your selected gear and proceed to checkout. Total items: ${cartItemCount}`}
+        />
+        <meta
+          name="keywords"
+          content="camera rental cart, accessory rental cart, Bengaluru"
+        />
+      </Helmet>
       <div className="max-w-7xl mx-auto p-4 md:p-8 my-10 font-sans">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-10 pb-4 border-b border-gray-200 flex justify-between items-center">
           <span className="tracking-tight">

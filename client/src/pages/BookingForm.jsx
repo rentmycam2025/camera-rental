@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 import { createBooking } from "../api";
 import { BRAND_CONFIG } from "../config/constants";
@@ -683,9 +684,10 @@ const BookingForm = ({
     if (step === 1) {
       if (!validateStep1()) {
         setNotification({
-          message: "Please fix the errors before proceeding.",
+          message: "Please enter the details before proceeding.",
           type: "error",
         });
+
         return;
       }
     }
@@ -855,6 +857,20 @@ const BookingForm = ({
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 bg-white shadow-2xl shadow-gray-300 rounded-2xl my-10 border-t-8 border-primary-500">
+      <Helmet>
+        <title>Checkout - Rent My Cam</title>
+        <meta
+          name="description"
+          content="Complete your camera & accessory rental checkout securely with Rent My Cam. Confirm your booking now!"
+        />
+        <meta property="og:title" content="Rent My Cam - Checkout" />
+        <meta
+          property="og:description"
+          content="Complete your camera & accessory rental checkout securely with Rent My Cam."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
       <h2 className="text-4xl font-extrabold text-gray-900 mb-6">
         Equipment Rental Checkout
       </h2>

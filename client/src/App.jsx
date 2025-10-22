@@ -99,6 +99,9 @@ function AppContent() {
     else if (path === "/cart") setActivePage("cart");
     else if (path === "/booking") setActivePage("booking");
     else if (path === "/product") setActivePage("detail");
+    else if (path === "/privacy") setActivePage("privacy");
+    else if (path === "/terms") setActivePage("terms");
+    else setActivePage("");
   }, [location.pathname]);
 
   const handlePageChange = useCallback(
@@ -119,6 +122,12 @@ function AppContent() {
           break;
         case "booking":
           navigate("/booking");
+          break;
+        case "privacy":
+          navigate("/privacy");
+          break;
+        case "terms":
+          navigate("/terms");
           break;
         default:
           navigate("/");

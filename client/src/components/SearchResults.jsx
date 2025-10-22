@@ -6,20 +6,30 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
   if (!query) return null;
 
   return (
-    // 1. Overall Container: White background, subtle shadow, light border
-    <div className="absolute z-50 mt-2 w-full bg-white border border-gray-100 rounded-xl shadow-lg max-h-80 overflow-y-auto ring-1 ring-black/5">
+    // Responsive container: Full width on mobile, proper positioning
+    <div
+      className="
+    absolute z-50 mt-2 
+    left-1/2 transform -translate-x-1/2
+    w-[90%] max-w-[420px]  // small width on mobile
+    bg-white border border-gray-100 rounded-xl shadow-lg 
+    max-h-80 overflow-y-auto ring-1 ring-black/5
+    sm:w-[90%] sm:max-w-[400px]  // slightly larger on small screens
+    md:left-1/2 md:w-[400px] md:max-h-96
+    lg:w-[500px] lg:max-h-96
+  "
+    >
       {isLoading ? (
-        // Loader State
-        <div className="flex items-center justify-center py-6">
-          {/* Default Loader assumes a primary color in a light theme */}
+        // Loader State - responsive padding
+        <div className="flex items-center justify-center py-6 md:py-8">
           <Loader />
         </div>
       ) : results.length === 0 ? (
-        // Empty State
-        <div className="text-center py-8">
+        // Empty State - responsive text and spacing
+        <div className="text-center py-6 md:py-8 px-4">
           <div className="text-gray-300 mb-3">
             <svg
-              className="w-12 h-12 mx-auto"
+              className="w-10 h-10 mx-auto md:w-12 md:h-12"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -32,41 +42,52 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
               />
             </svg>
           </div>
-          <p className="text-gray-500 text-sm">No results found for:</p>
-          <p className="text-gray-800 font-semibold text-lg mt-0.5 break-words px-4">
+          <p className="text-gray-500 text-sm md:text-base">
+            No results found for:
+          </p>
+          <p className="text-gray-800 font-semibold text-base md:text-lg mt-0.5 break-words px-2 md:px-4">
             "{query}"
           </p>
         </div>
       ) : (
-        <div className="p-1">
-          {/* Header */}
-          {/* Sticky header with a slightly off-white background */}
-          <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 mb-1 sticky top-0 bg-gray-50 z-10 rounded-t-xl">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <div className="p-1 md:p-2">
+          {/* Header - responsive padding and text */}
+          <div
+            className="flex items-center justify-between px-2 py-2 border-b border-gray-200 mb-1 sticky top-0 bg-gray-50 z-10 rounded-t-xl
+                         md:px-3"
+          >
+            <span
+              className="text-xs font-semibold text-gray-500 uppercase tracking-wider
+                            md:text-sm"
+            >
               Search Results
             </span>
-            {/* Primary color count badge */}
-            <span className="text-xs bg-primary-100 text-primary-700 px-2.5 py-1 rounded-full font-bold">
+            <span
+              className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full font-bold
+                            md:text-sm md:px-2.5"
+            >
               {results.length}
             </span>
           </div>
 
-          {/* Results List */}
-          <div className="space-y-1 pb-1">
+          {/* Results List - responsive spacing */}
+          <div className="space-y-1 pb-1 md:space-y-1.5">
             {results.map((item) => (
               <button
                 key={item._id || item.id}
                 onClick={() => onSelect && onSelect(item)}
-                // 2. Button Styling: Light gray hover, clearer focus state
-                className="w-full text-left px-3 py-2.5 rounded-lg transition-all duration-150 group 
+                className="w-full text-left px-2 py-2 rounded-lg transition-all duration-150 group 
                            hover:bg-gray-100 border border-transparent focus:outline-none focus:ring-2 
-                           focus:ring-primary-500 focus:bg-primary-50"
+                           focus:ring-primary-500 focus:bg-primary-50
+                           md:px-3 md:py-2.5"
               >
-                <div className="flex items-center space-x-3">
-                  {/* Product Image */}
+                <div className="flex items-center space-x-2 md:space-x-3">
+                  {/* Product Image - responsive sizing */}
                   <div className="flex-shrink-0">
-                    {/* 3. Image Placeholder: Light gray background */}
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300">
+                    <div
+                      className="w-8 h-8 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center border border-gray-300
+                                   md:w-10 md:h-10"
+                    >
                       {item.image ? (
                         <img
                           loading="lazy"
@@ -82,7 +103,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                       ) : (
                         <div className="text-gray-500">
                           <svg
-                            className="w-5 h-5"
+                            className="w-4 h-4 md:w-5 md:h-5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -99,43 +120,53 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                     </div>
                   </div>
 
-                  {/* Product Info */}
+                  {/* Product Info - responsive text and spacing */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        {/* 4. Text Styling: Dark text, primary color on hover */}
-                        <h4 className="text-base font-medium text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                      <div className="flex-1 min-w-0">
+                        {/* Product Name - responsive text and truncation */}
+                        <h4
+                          className="text-sm font-medium text-gray-900 group-hover:text-primary-600 transition-colors truncate
+                                      md:text-base"
+                        >
                           {item.name}
                         </h4>
-                        <div className="flex items-center space-x-2 mt-0.5">
+
+                        {/* Tags Container - responsive spacing and layout */}
+                        <div className="flex flex-wrap items-center gap-1 mt-0.5 md:gap-2 md:flex-nowrap">
                           {/* Category Tag */}
                           <span
-                            className={`text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${
-                              item.category === "camera"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-green-100 text-green-700"
-                            }`}
+                            className={`text-xs font-semibold px-1.5 py-0.5 rounded-full capitalize flex-shrink-0
+                                      md:px-2 ${
+                                        item.category === "camera"
+                                          ? "bg-blue-100 text-blue-700"
+                                          : "bg-green-100 text-green-700"
+                                      }`}
                           >
                             {item.category}
                           </span>
+
                           {/* Offer Tag */}
                           {item.offerPrice &&
                             item.offerPrice < item.pricePerDay && (
-                              <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-medium shadow-sm">
+                              <span
+                                className="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full font-medium shadow-sm flex-shrink-0
+                                            md:px-2"
+                              >
                                 Sale!
                               </span>
                             )}
                         </div>
                       </div>
 
-                      {/* Price */}
-                      <div className="text-right flex-shrink-0 ml-4">
+                      {/* Price - responsive positioning and text */}
+                      <div className="text-right flex-shrink-0 ml-2 md:ml-4">
                         <div className="flex flex-col items-end">
                           {item.offerPrice &&
                           item.offerPrice < item.pricePerDay ? (
                             // Offer Price
                             <>
-                              <span className="text-sm font-bold text-red-600">
+                              <span className="text-xs font-bold text-red-600 md:text-sm">
                                 ₹{item.offerPrice.toLocaleString()}
                               </span>
                               <span className="text-xs text-gray-500 line-through">
@@ -144,7 +175,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                             </>
                           ) : (
                             // Regular Price
-                            <span className="text-sm font-bold text-gray-900">
+                            <span className="text-xs font-bold text-gray-900 md:text-sm">
                               ₹{item.pricePerDay.toLocaleString()}
                             </span>
                           )}
@@ -152,17 +183,20 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                       </div>
                     </div>
 
-                    {/* Description Preview */}
+                    {/* Description Preview - responsive text */}
                     {item.description && (
-                      <p className="text-xs text-gray-600 mt-1 line-clamp-1">
+                      <p className="text-xs text-gray-600 mt-1 line-clamp-1 hidden sm:block">
                         {item.description}
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* Hover Arrow */}
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Hover Arrow - hidden on mobile, shown on desktop */}
+                <div
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block
+                               md:right-3"
+                >
                   <svg
                     className="w-4 h-4 text-primary-500"
                     fill="none"
@@ -181,15 +215,15 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
             ))}
           </div>
 
-          {/* Footer - Only show if many results */}
-          {/* {results.length > 8 && (
-            <div className="border-t border-gray-200 mt-2 pt-2 pb-1">
-              <p className="text-xs text-gray-500 text-center">
+          {/* Footer - responsive text */}
+          {results.length > 8 && (
+            <div className="border-t border-gray-200 mt-2 pt-2 pb-1 px-2 md:px-3">
+              <p className="text-xs text-gray-500 text-center md:text-sm">
                 Showing {Math.min(results.length, 8)} of {results.length}{" "}
                 results
               </p>
             </div>
-          )} */}
+          )}
         </div>
       )}
     </div>
