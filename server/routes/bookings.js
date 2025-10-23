@@ -4,71 +4,58 @@ const router = express.Router();
 const Booking = require("../models/Booking");
 const { authMiddleware, adminOnly } = require("../middleware/authMiddleware");
 const multer = require("multer");
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const cloudinary = require("../utils/cloudinary"); // your Cloudinary config
+const upload = multer({ storage: multer.memoryStorage() });
+
 const {
   sendBookingEmail,
   sendCustomerConfirmationEmail,
   generateWhatsAppLink,
 } = require("../utils/emailUtils");
+
 const {
   createBookingData,
   calculateBookingTotal,
   generateDetailedWhatsAppMessage,
 } = require("../utils/bookingUtils");
 
-// // Email transporter configuration
-// const nodemailer = require("nodemailer");
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-
-// GET all bookings
-router.get("/", authMiddleware, adminOnly, async (req, res) => {
-  try {
-    const bookings = await Booking.find().populate("cameras accessories");
-    res.json({
-      success: true,
-      count: bookings.length,
-      bookings: bookings,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-});
-
-// GET single booking
-router.get("/:id", authMiddleware, adminOnly, async (req, res) => {
-  try {
-    const booking = await Booking.findById(req.params.id).populate(
-      "cameras accessories"
+// Helper to upload buffer to Cloudinary with custom filename
+const uploadBufferToCloudinary = (buffer, folder, publicId) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, public_id: publicId, overwrite: true },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result.secure_url);
+      }
     );
-    if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+    stream.end(buffer);
+  });
+};
 
-    res.json({
-      success: true,
-      booking: booking,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-});
+// Helper to create safe filenames
+const slugify = (text) => {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(
+    2,
+    "0"
+  )}${String(now.getMinutes()).padStart(2, "0")}${String(
+    now.getSeconds()
+  ).padStart(2, "0")}`;
 
-// POST create booking
+  return (
+    text
+      .toLowerCase()
+      .replace(/\s+/g, "_") // spaces to underscores
+      .replace(/[^\w-]/g, "") + // remove invalid chars
+    `_${dateStr}`
+  );
+};
+// remove invalid characters
+
 // POST create booking
 router.post(
   "/",
@@ -78,49 +65,60 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      console.log("Body:", req.body);
-      console.log("Files:", req.files);
+      const name = req.body.fullName;
+      if (!name) throw new Error("Name is required for file naming.");
 
-      // 1️⃣ Create booking data using utility function
+      // Upload files to Cloudinary
+      let idProofUrl = null;
+      let userPhotoUrl = null;
+
+      if (req.files.idProof) {
+        const file = req.files.idProof[0];
+        const fileName = slugify(name + "_idProof");
+        idProofUrl = await uploadBufferToCloudinary(
+          file.buffer,
+          "rentmycam/idProofs",
+          fileName
+        );
+      }
+
+      if (req.files.userPhoto) {
+        const file = req.files.userPhoto[0];
+        const fileName = slugify(name + "_userPhoto");
+        userPhotoUrl = await uploadBufferToCloudinary(
+          file.buffer,
+          "rentmycam/userPhotos",
+          fileName
+        );
+      }
+
+      // Create booking data
       const bookingData = createBookingData(req.body, req.files);
+      bookingData.idProofUrl = idProofUrl;
+      bookingData.userPhotoUrl = userPhotoUrl;
 
-      // 2️⃣ Create booking in DB (single save)
+      // Save booking
       let booking = await Booking.create(bookingData);
 
-      // 3️⃣ Populate cameras and accessories once for total calculation & response
+      // Populate cameras & accessories
       booking = await Booking.findById(booking._id).populate(
         "cameras accessories"
       );
 
-      // 4️⃣ Calculate total amount
+      // Calculate total amount
       const { totalAmount } = calculateBookingTotal(booking);
       booking.totalAmount = totalAmount;
-
-      // 5️⃣ Save updated total
       await booking.save();
 
-      console.log("Booking created successfully:", {
-        id: booking._id,
-        customer: booking.fullName,
-        total: booking.totalAmount,
-      });
-
-      // // 6️⃣ Send emails asynchronously (non-blocking)
-      // sendBookingEmail(booking, req.files).catch((err) =>
-      //   console.error("Admin email sending failed:", err)
-      // );
-      // sendCustomerConfirmationEmail(booking).catch((err) =>
-      //   console.error("Customer email sending failed:", err)
-      // );
-
-      // 7️⃣ Send response immediately
+      // Send response immediately
       res.status(201).json({
         success: true,
         message: "Booking created successfully",
-        booking: booking,
+        booking,
         whatsappMessage: generateDetailedWhatsAppMessage(booking),
       });
-      // Then send emails asynchronously
+
+      // Send emails asynchronously
       setImmediate(() => {
         sendBookingEmail(booking, req.files).catch((err) =>
           console.error("Admin email failed:", err)
@@ -131,13 +129,50 @@ router.post(
       });
     } catch (err) {
       console.error("Booking creation error:", err);
+
+      const validationErrors = err.errors
+        ? Object.values(err.errors).map((e) => e.message)
+        : null;
+
       res.status(400).json({
         success: false,
         message: err.message,
+        validationErrors,
       });
     }
   }
 );
+
+// GET all bookings
+router.get("/", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const bookings = await Booking.find().populate("cameras accessories");
+    res.json({
+      success: true,
+      count: bookings.length,
+      bookings,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET single booking
+router.get("/:id", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate(
+      "cameras accessories"
+    );
+    if (!booking)
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
+
+    res.json({ success: true, booking });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 // PUT update booking
 router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
@@ -147,17 +182,11 @@ router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
     }).populate("cameras accessories");
 
     if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
 
     // Send confirmation email if status changed to "Confirmed"
-    // if (req.body.status === "Confirmed") {
-    //   sendCustomerConfirmationEmail(transporter, booking).catch((err) =>
-    //     console.error("Confirmation email sending failed:", err)
-    //   );
-    // }
     if (req.body.status === "Confirmed") {
       sendCustomerConfirmationEmail(booking).catch((err) =>
         console.error("Confirmation email sending failed:", err)
@@ -167,14 +196,11 @@ router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
     res.json({
       success: true,
       message: "Booking updated successfully",
-      booking: booking,
+      booking,
       whatsappMessage: generateDetailedWhatsAppMessage(booking),
     });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
@@ -184,24 +210,17 @@ router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
     const booking = await Booking.findByIdAndDelete(req.params.id);
 
     if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
 
-    res.json({
-      success: true,
-      message: "Booking deleted successfully",
-    });
+    res.json({ success: true, message: "Booking deleted successfully" });
   } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
-// GET WhatsApp message for a booking
+// GET WhatsApp message
 router.get("/:id/wa-message", async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate(
@@ -209,26 +228,18 @@ router.get("/:id/wa-message", async (req, res) => {
     );
 
     if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
 
     const message = generateDetailedWhatsAppMessage(booking);
-
-    res.json({
-      success: true,
-      message: message,
-    });
+    res.json({ success: true, message });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
-// GET WhatsApp link for a booking
+// GET WhatsApp link
 router.get("/:id/wa-link", async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate(
@@ -236,24 +247,16 @@ router.get("/:id/wa-link", async (req, res) => {
     );
 
     if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
 
     const waLink = generateWhatsAppLink(booking.contact, booking);
     const message = generateDetailedWhatsAppMessage(booking);
 
-    res.json({
-      success: true,
-      waLink: waLink,
-      message: message,
-    });
+    res.json({ success: true, waLink, message });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -263,10 +266,9 @@ router.get("/:id/status", authMiddleware, adminOnly, async (req, res) => {
     const booking = await Booking.findById(req.params.id);
 
     if (!booking)
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking not found" });
 
     res.json({
       success: true,
@@ -274,10 +276,7 @@ router.get("/:id/status", authMiddleware, adminOnly, async (req, res) => {
       updatedAt: booking.updatedAt,
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

@@ -5,6 +5,10 @@ import { Helmet } from "react-helmet-async";
 import { createBooking } from "../api";
 import { BRAND_CONFIG } from "../config/constants";
 
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 // Lazy loaded components
 const Step1Form = lazy(() => {
   return new Promise((resolve) => {
@@ -680,14 +684,13 @@ const BookingForm = ({
 
   const handleNext = (e) => {
     e.preventDefault();
-
+    scrollToTop();
     if (step === 1) {
       if (!validateStep1()) {
         setNotification({
           message: "Please enter the details before proceeding.",
           type: "error",
         });
-
         return;
       }
     }
@@ -697,6 +700,7 @@ const BookingForm = ({
 
   const handleBack = () => {
     setStep(step - 1);
+    scrollToTop();
   };
 
   const handleSubmit = async (e) => {
@@ -755,6 +759,7 @@ const BookingForm = ({
       setSubmissionDetails(contactInfo);
       setBookingCompleted(true);
       setStep(3); // Force step to 3 immediately
+      scrollToTop();
 
       // Clear cart but don't navigate away
 

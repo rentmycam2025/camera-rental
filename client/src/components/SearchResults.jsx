@@ -1,9 +1,17 @@
 // components/SearchResults.jsx
 import React from "react";
+import { Link } from "react-router-dom";
+
 import Loader from "../components/Loader";
 
-const SearchResults = ({ query, results, isLoading, onSelect }) => {
+const SearchResults = ({ query, results, isLoading }) => {
   if (!query) return null;
+
+  const slugify = (text) =>
+    text
+      .toLowerCase()
+      .replace(/ /g, "-")
+      .replace(/[^\w-]+/g, "");
 
   return (
     // Responsive container: Full width on mobile, proper positioning
@@ -16,7 +24,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
     max-h-80 overflow-y-auto ring-1 ring-black/5
     sm:w-[90%] sm:max-w-[400px]  // slightly larger on small screens
     md:left-1/2 md:w-[400px] md:max-h-96
-    lg:w-[500px] lg:max-h-96
+    lg:w-[500px] lg:max-h-96 pointer-events-auto
   "
     >
       {isLoading ? (
@@ -73,13 +81,13 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
           {/* Results List - responsive spacing */}
           <div className="space-y-1 pb-1 md:space-y-1.5">
             {results.map((item) => (
-              <button
-                key={item._id || item.id}
-                onClick={() => onSelect && onSelect(item)}
+              <Link
+                key={item.name}
+                to={`/product/${slugify(item.name)}`}
                 className="w-full text-left px-2 py-2 rounded-lg transition-all duration-150 group 
-                           hover:bg-gray-100 border border-transparent focus:outline-none focus:ring-2 
-                           focus:ring-primary-500 focus:bg-primary-50
-                           md:px-3 md:py-2.5"
+                            hover:bg-gray-100 border border-transparent focus:outline-none focus:ring-2 
+                            focus:ring-primary-500 focus:bg-primary-50
+                            md:px-3 md:py-2.5 block"
               >
                 <div className="flex items-center space-x-2 md:space-x-3">
                   {/* Product Image - responsive sizing */}
@@ -211,7 +219,7 @@ const SearchResults = ({ query, results, isLoading, onSelect }) => {
                     />
                   </svg>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
 

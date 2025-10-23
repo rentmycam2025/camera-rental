@@ -68,8 +68,6 @@ const generateBookingEmailTemplate = (booking, files) => {
           </div>
 
           <div class="content">
-
-            <!-- Customer Information -->
             <div class="section">
               <div class="section-title">Customer Information</div>
               <div class="detail-row"><div class="detail-label">Full Name:</div><div class="detail-value">${
@@ -89,7 +87,6 @@ const generateBookingEmailTemplate = (booking, files) => {
               }</div></div>
             </div>
 
-            <!-- Documents -->
             <div class="section">
               <div class="section-title">Documentation</div>
               <div class="detail-row">
@@ -114,7 +111,6 @@ const generateBookingEmailTemplate = (booking, files) => {
               </div>
             </div>
 
-            <!-- Rental Details -->
             <div class="section">
               <div class="section-title">Rental Details</div>
               <div class="detail-row"><div class="detail-label">Rental Period:</div><div class="detail-value">${
@@ -128,66 +124,63 @@ const generateBookingEmailTemplate = (booking, files) => {
               }</div></div>
             </div>
 
-            <!-- Equipment Details -->
             <div class="section">
               <div class="section-title">Equipment Details</div>
               <p>Cameras (${booking.cameras.length})</p>
               ${
                 booking.cameras.length > 0
                   ? `<table class="item-list">
-                      <thead><tr><th>Name</th><th>Rate</th><th>Qty</th><th>Total</th></tr></thead>
-                      <tbody>
-                        ${booking.cameras
-                          .map(
-                            (c) => `<tr>
-                          <td>${c.name}</td>
-                          <td>₹${(
-                            c.offerPrice || c.pricePerDay
-                          ).toLocaleString()}</td>
-                          <td>1</td>
-                          <td>₹${(
-                            c.offerPrice || c.pricePerDay
-                          ).toLocaleString()}</td>
-                        </tr>`
-                          )
-                          .join("")}
-                      </tbody>
-                    </table>`
+                    <thead><tr><th>Name</th><th>Rate</th><th>Qty</th><th>Total</th></tr></thead>
+                    <tbody>
+                      ${booking.cameras
+                        .map(
+                          (c) => `<tr>
+                        <td>${c.name}</td>
+                        <td>₹${(
+                          c.offerPrice || c.pricePerDay
+                        ).toLocaleString()}</td>
+                        <td>1</td>
+                        <td>₹${(
+                          c.offerPrice || c.pricePerDay
+                        ).toLocaleString()}</td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>`
                   : `<p>No cameras booked</p>`
               }
               <p>Accessories (${booking.accessories.length})</p>
               ${
                 booking.accessories.length > 0
                   ? `<table class="item-list">
-                      <thead><tr><th>Name</th><th>Rate</th><th>Qty</th><th>Total</th></tr></thead>
-                      <tbody>
-                        ${booking.accessories
-                          .map(
-                            (a) => `<tr>
-                          <td>${a.name}</td>
-                          <td>₹${(
-                            a.offerPrice || a.pricePerDay
-                          ).toLocaleString()}</td>
-                          <td>1</td>
-                          <td>₹${(
-                            a.offerPrice || a.pricePerDay
-                          ).toLocaleString()}</td>
-                        </tr>`
-                          )
-                          .join("")}
-                      </tbody>
-                    </table>`
+                    <thead><tr><th>Name</th><th>Rate</th><th>Qty</th><th>Total</th></tr></thead>
+                    <tbody>
+                      ${booking.accessories
+                        .map(
+                          (a) => `<tr>
+                        <td>${a.name}</td>
+                        <td>₹${(
+                          a.offerPrice || a.pricePerDay
+                        ).toLocaleString()}</td>
+                        <td>1</td>
+                        <td>₹${(
+                          a.offerPrice || a.pricePerDay
+                        ).toLocaleString()}</td>
+                      </tr>`
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>`
                   : `<p>No accessories booked</p>`
               }
             </div>
 
-            <!-- Total -->
             <div class="total-section">
               Final Total: ₹${totalAmount.toLocaleString()}<br/>
               Rental Period: ${booking.rentalPeriod}
             </div>
 
-            <!-- Action Buttons -->
             <div class="action-buttons">
               <a href="${generateWhatsAppLink(
                 booking.contact,
@@ -216,7 +209,7 @@ const prepareEmailAttachments = (files) => {
     attachments.push({
       name: files.idProof[0].originalname,
       content: files.idProof[0].buffer.toString("base64"),
-      contentId: "idProofImage", // CID for inline image reference
+      contentId: "idProofImage",
     });
   }
 
@@ -224,7 +217,7 @@ const prepareEmailAttachments = (files) => {
     attachments.push({
       name: files.userPhoto[0].originalname,
       content: files.userPhoto[0].buffer.toString("base64"),
-      contentId: "userPhotoImage", // CID for inline image reference
+      contentId: "userPhotoImage",
     });
   }
 
@@ -261,7 +254,6 @@ const sendBookingEmail = async (booking, files) => {
   }
 };
 
-// Customer confirmation email with similar design
 const sendCustomerConfirmationEmail = async (booking) => {
   try {
     const { totalAmount } = calculateBookingTotal(booking);
@@ -273,7 +265,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
                                   <title>Booking Confirmation</title>
                                   <style>
-                                      /* Reset */
                                       * {
                                           margin: 0;
                                           padding: 0;
@@ -291,7 +282,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           -ms-text-size-adjust: 100%;
                                       }
                                       
-                                      /* Container */
                                       .container {
                                           max-width: 600px;
                                           margin: 0 auto;
@@ -303,7 +293,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           text-align: center;
                                       }
                                       
-                                      /* Logo */
                                       .logo {
                                           max-width: 120px;
                                           margin-bottom: 25px;
@@ -312,7 +301,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           margin-right: auto;
                                       }
                                       
-                                      /* Typography */
                                       h2 {
                                           color: #F97316;
                                           font-size: 26px;
@@ -331,7 +319,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           color: #F97316;
                                       }
                                       
-                                      /* Contact Section */
                                       .contact {
                                           display: flex;
                                           justify-content: center;
@@ -369,14 +356,12 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           filter: brightness(0) invert(1);
                                       }
                                       
-                                      /* Footer */
                                       .footer {
                                           font-size: 12px;
                                           color: #9ca3af;
                                           margin-top: 30px;
                                       }
                                       
-                                      /* Price Box */
                                       .price-box {
                                           background-color: #FFF7ED;
                                           border-radius: 8px;
@@ -391,14 +376,12 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           color: #F97316;
                                       }
                                       
-                                      /* Divider */
                                       .divider {
                                           height: 1px;
                                           background-color: #E5E7EB;
                                           margin: 25px 0;
                                       }
                                       
-                                      /* Responsive */
                                       @media only screen and (max-width: 480px) {
                                           .container {
                                               padding: 25px 20px;
@@ -429,13 +412,6 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                               font-size: 20px;
                                           }
                                       }
-                                      
-                                      /* For email clients that don't support media queries */
-                                      @media only screen and (max-width: 480px) {
-                                          table.container {
-                                              width: 100% !important;
-                                          }
-                                      }
                                   </style>
                               </head>
                               <body>
@@ -453,24 +429,50 @@ const sendCustomerConfirmationEmail = async (booking) => {
                                           <div class="price-amount">₹${totalAmount.toLocaleString()}</div>
                                       </div>
                                       
-                                      <!-- Contact Section -->
-                                      <div class="contact">
-                                          <!-- Call Us -->
+                                      <div class="contact" style="
+                                            display: flex;
+                                            flex-direction: column;
+                                            gap: 10px;
+                                            max-width: 300px;
+                                            width: 90%;
+                                            margin: 10px auto;
+                                            font-family: Arial, sans-serif;
+                                        ">
                                           <a href="tel:${
                                             process.env.CONTACT_NUMBER
-                                          }" class="contact-item">
-                                              <img src="https://img.icons8.com/?size=100&id=I24lanX6Nq71&format=png&color=000000" alt="Phone Icon">
-                                              Call Us
+                                          }" style="
+                                              text-decoration: none; 
+                                              color: #000; 
+                                              font-weight: bold; 
+                                              padding: 10px 15px; 
+                                              border: 1px solid #ccc; 
+                                              border-radius: 6px; 
+                                              text-align: center;
+                                              transition: background 0.2s;
+                                          " onmouseover="this.style.background='#f2f2f2'" onmouseout="this.style.background='transparent'">
+                                            Call Us: ${
+                                              process.env.CONTACT_NUMBER
+                                            }
                                           </a>
 
-                                          <!-- WhatsApp Us -->
                                           <a href="https://wa.me/${
                                             process.env.WHATSAPP_NUMBER
-                                          }" class="contact-item">
-                                              <img src="https://img.icons8.com/?size=100&id=16713&format=png&color=000000" alt="WhatsApp Icon">
-                                              WhatsApp Us
+                                          }" style="
+                                              text-decoration: none; 
+                                              color: #25D366; 
+                                              font-weight: bold; 
+                                              padding: 10px 15px; 
+                                              border: 1px solid #25D366; 
+                                              border-radius: 6px; 
+                                              text-align: center;
+                                              transition: background 0.2s, color 0.2s;
+                                          " onmouseover="this.style.background='#25D366'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#25D366';">
+                                            WhatsApp Us: ${
+                                              process.env.WHATSAPP_NUMBER
+                                            }
                                           </a>
-                                      </div>
+                                        </div>
+
                                       
                                       <div class="divider"></div>
                                       

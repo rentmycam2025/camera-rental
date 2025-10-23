@@ -77,11 +77,11 @@ const createBookingData = (reqBody, files) => {
 const generateDetailedWhatsAppMessage = (booking) => {
   const { totalAmount } = calculateBookingTotal(booking);
 
-  let message = `Hello ${booking.fullName}, your booking is confirmed!\n\n`;
-  message += `📅 Rental Period: ${booking.rentalPeriod}\n\n`;
+  let message = `Hello ${booking.fullName}, your booking is confirmed! \u{1F527}\n`;
+  message += `Rental Period: ${booking.rentalPeriod} \u{1F527}\n\n`;
 
   if (booking.cameras.length > 0) {
-    message += `📷 Cameras:\n`;
+    message += `\u{1F4C5} Cameras:\n`;
     booking.cameras.forEach((camera) => {
       message += `• ${camera.name} - ₹${(
         camera.offerPrice || camera.pricePerDay

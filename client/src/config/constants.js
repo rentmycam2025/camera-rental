@@ -83,5 +83,5 @@ export const API_CONFIG = {
     accessories: "/accessories",
     bookings: "/bookings",
   },
-  timeout: 20000, // 20 seconds
+  timeout: 60000, // 20 seconds
 };

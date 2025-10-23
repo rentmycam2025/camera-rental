@@ -7,14 +7,9 @@ const bookingSchema = new mongoose.Schema(
     contact: { type: String, required: true },
     address: { type: String, required: true },
     emergencyContact: { type: String, required: true },
-    idProof: {
-      data: { type: Buffer, required: true },
-      contentType: { type: String, required: true },
-    },
-    userPhoto: {
-      data: { type: Buffer, required: true },
-      contentType: { type: String, required: true },
-    },
+    idProofUrl: { type: String, required: true },
+    userPhotoUrl: { type: String, required: true },
+
     cameras: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Camera", required: true },
     ],
