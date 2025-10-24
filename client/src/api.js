@@ -22,7 +22,7 @@ export const getCameras = async () => {
     const response = await api.get(API_CONFIG.endpoints.cameras);
     return response.data;
   } catch (error) {
-    console.error("Error fetching cameras:", error);
+    console.error("Error fetching cameras");
     throw error;
   }
 };
@@ -32,7 +32,7 @@ export const getCameraById = async (id) => {
     const response = await api.get(`${API_CONFIG.endpoints.cameras}/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching camera:", error);
+    console.error("Error fetching camera");
     throw error;
   }
 };
@@ -43,7 +43,7 @@ export const getAccessories = async () => {
     const response = await api.get(API_CONFIG.endpoints.accessories);
     return response.data;
   } catch (error) {
-    console.error("Error fetching accessories:", error);
+    console.error("Error fetching accessories");
     throw error;
   }
 };
@@ -53,7 +53,7 @@ export const getAccessoryById = async (id) => {
     const response = await api.get(`${API_CONFIG.endpoints.accessories}/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching accessory:", error);
+    console.error("Error fetching accessory");
     throw error;
   }
 };
@@ -64,7 +64,7 @@ export const createBooking = async (data) => {
     const response = await api.post(API_CONFIG.endpoints.bookings, data);
     return response.data;
   } catch (error) {
-    console.error("Error creating booking:", error);
+    console.error("Error creating booking");
     throw error;
   }
 };
@@ -74,7 +74,7 @@ export const getBookings = async () => {
     const response = await api.get(API_CONFIG.endpoints.bookings);
     return response.data;
   } catch (error) {
-    console.error("Error fetching bookings:", error);
+    console.error("Error fetching bookings");
     throw error;
   }
 };

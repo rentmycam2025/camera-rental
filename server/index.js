@@ -17,7 +17,45 @@ const authRoutes = require("./routes/auth");
 const app = express();
 
 // ---------- SECURITY & PERFORMANCE MIDDLEWARE ----------
-app.use(helmet()); // Adds security headers (CSP, HSTS, XSS protection, etc.)
+// app.use(helmet()); // Adds security headers (CSP, HSTS, XSS protection, etc.)
+// ---------- SECURITY HEADERS CONFIG ----------
+app.use(
+  helmet({
+    frameguard: { action: "sameorigin" }, // X-Frame-Options
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'unsafe-inline'", "https:"],
+        "style-src": ["'self'", "'unsafe-inline'", "https:"],
+        "img-src": ["'self'", "data:", "https:"],
+        "font-src": ["'self'", "https:"],
+        "connect-src": ["'self'", "https:"],
+        "object-src": ["'none'"],
+        "upgrade-insecure-requests": [],
+      },
+    },
+    referrerPolicy: { policy: "no-referrer" },
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+    noSniff: true,
+    xssFilter: true,
+    crossOriginOpenerPolicy: { policy: "same-origin" }, // ✅ Fix COOP
+    crossOriginEmbedderPolicy: true, // ✅ Fix COEP
+    crossOriginResourcePolicy: { policy: "same-origin" }, // ✅ Fix CORP
+    permissionsPolicy: {
+      features: {
+        camera: ["none"],
+        microphone: ["none"],
+        geolocation: ["none"],
+      },
+    },
+  })
+);
+
 app.use(compression()); // Gzip/Brotli compression for API responses
 
 // ---------- CORS ----------

@@ -23,7 +23,7 @@ export const useApi = (setNotification) => {
       } catch (error) {
         console.error("Failed to fetch data:", error);
         setNotification({
-          message: "Failed to load product data. Please try again later.",
+          message: "Oops! Something went wrong. Please try again later.",
           type: "error",
         });
         // Set empty arrays on error

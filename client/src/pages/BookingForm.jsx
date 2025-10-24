@@ -768,11 +768,9 @@ const BookingForm = ({
         type: "success",
       });
     } catch (err) {
-      console.error("Booking submission error:", err);
+      // console.error("Booking submission error:", err);
       setNotification({
-        message:
-          err.response?.data?.message ||
-          "Error confirming booking. Please try again.",
+        message: "Oops! We couldn’t confirm your booking. Please try again.",
         type: "error",
       });
     } finally {
