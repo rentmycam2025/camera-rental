@@ -169,32 +169,41 @@ const Cart = ({
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto p-10 my-16 text-center bg-white rounded-3xl shadow-2xl border-b-8 border-primary-500/80">
-        <svg
-          className="w-16 h-16 mx-auto text-primary-500 mb-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-          />
-        </svg>
-        <h2 className="text-4xl font-black text-gray-900 mb-3">
+      <div className="flex flex-col items-center justify-center h-[80vh] px-6 text-center animate-fadeInUp">
+        {/* Icon */}
+        <div className="flex items-center justify-center w-24 h-24 mb-6 rounded-full bg-primary-100">
+          <svg
+            className="w-12 h-12 text-primary-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
+          </svg>
+        </div>
+
+        {/* Heading */}
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">
           Your Cart is Empty
         </h2>
-        <p className="text-lg text-gray-600 mb-10 max-w-sm mx-auto">
-          It looks like you haven't added any gear yet. Find the perfect
-          equipment for your next shoot.
+
+        {/* Description */}
+        <p className="text-gray-600 text-lg sm:text-xl mb-10 max-w-md">
+          Looks like you haven’t added any gear yet. Explore our collection to
+          find the perfect equipment for your next shoot.
         </p>
+
+        {/* Button */}
         <Link to="/cameras">
           <button
             onClick={() => setActivePage("cameras")}
-            className="bg-primary-500 text-white font-semibold tracking-wide uppercase px-10 py-4 rounded-xl shadow-lg shadow-primary-500/40 hover:bg-primary-600 transition duration-300 transform hover:scale-[1.02]"
+            className="bg-primary-500 text-white font-semibold tracking-wide uppercase px-8 sm:px-10 py-3 sm:py-4 rounded-2xl shadow-lg shadow-primary-500/40 hover:bg-primary-600 transition duration-300 transform hover:scale-105"
           >
             Browse Gear Now
           </button>

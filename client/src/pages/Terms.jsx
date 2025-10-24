@@ -20,7 +20,7 @@ const Terms = () => (
       <link rel="canonical" href="https://rentmycam.in/terms" />
     </Helmet>
 
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader className="min-h-[90vh]" />}>
       <MarkdownPage content={termsContent} />
     </Suspense>
   </>

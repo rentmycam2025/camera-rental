@@ -20,7 +20,7 @@ const Privacy = () => (
       <link rel="canonical" href="https://rentmycam.in/privacy" />
     </Helmet>
 
-    <Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader className="min-h-[90vh]" />}>
       <MarkdownPage content={privacyContent} />
     </Suspense>
   </>

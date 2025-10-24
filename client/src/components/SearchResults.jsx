@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import Loader from "../components/Loader";
 
-const SearchResults = ({ query, results, isLoading }) => {
+const SearchResults = ({ query, results, isLoading, onSelect }) => {
   if (!query) return null;
 
   const slugify = (text) =>
@@ -12,6 +12,12 @@ const SearchResults = ({ query, results, isLoading }) => {
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^\w-]+/g, "");
+
+  const handleResultClick = (item) => {
+    if (onSelect) {
+      onSelect(item);
+    }
+  };
 
   return (
     // Responsive container: Full width on mobile, proper positioning
@@ -84,6 +90,7 @@ const SearchResults = ({ query, results, isLoading }) => {
               <Link
                 key={item.name}
                 to={`/product/${slugify(item.name)}`}
+                onClick={() => handleResultClick(item)}
                 className="w-full text-left px-2 py-2 rounded-lg transition-all duration-150 group 
                             hover:bg-gray-100 border border-transparent focus:outline-none focus:ring-2 
                             focus:ring-primary-500 focus:bg-primary-50

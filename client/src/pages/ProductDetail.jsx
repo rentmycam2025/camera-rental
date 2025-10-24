@@ -23,7 +23,11 @@ const ProductDetail = ({
 
       // Find product by slug
       const foundItem = allProducts.find(
-        (product) => product.name.toLowerCase().replace(/\s+/g, "-") === slug
+        (product) =>
+          product.name
+            .toLowerCase()
+            .replace(/ /g, "-")
+            .replace(/[^\w-]+/g, "") === slug
       );
 
       setItem(foundItem);
@@ -69,17 +73,35 @@ const ProductDetail = ({
   if (loading) return <Loader className="h-[100vh]" />;
 
   if (!item) {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
+    // setLoading(true);
+    // setTimeout(() => setLoading(false), 2000);
 
     return (
-      <div className="h-[100vh] max-w-7xl mx-auto p-8 my-10 text-center text-xl font-medium text-slate-500">
-        Product not found.
+      <div className="flex flex-col items-center justify-center h-[80vh] px-6 text-center">
+        {/* Animated icon box */}
+        <div className="bg-primary-100 rounded-full w-36 h-36 flex items-center justify-center mb-6 animate-scaleIn">
+          <span className="text-primary-500 text-6xl">😕</span>
+        </div>
+
+        <h1 className="text-4xl font-bold text-gray-800 mb-2 animate-fadeInUp">
+          Product Not Found
+        </h1>
+        <p className="text-gray-500 mb-6 animate-fadeInUp">
+          Sorry, the product you are looking for doesn't exist or may have been
+          removed.
+        </p>
+
+        <Link
+          to="/"
+          className="bg-primary-500 text-white font-semibold tracking-wide uppercase px-8 sm:px-10 py-3 sm:py-4 rounded-2xl shadow-lg shadow-primary-500/40 hover:bg-primary-600 transition duration-300 transform hover:scale-105"
+        >
+          Back to Home
+        </Link>
       </div>
     );
   }
 
-  const isCamera = !!item.inclusions && item.inclusions.length > 0;
+  const isCamera = item.category === "camera";
   const price = item.offerPrice || item.pricePerDay;
   const discountPercentage = item.offerPrice
     ? Math.round(

@@ -10,31 +10,23 @@ const Notification = ({
   message,
   type = "success",
   onClose,
-  duration = 4000, // auto-close duration
+  duration = 4000,
+  index = 0,
 }) => {
   const [visible, setVisible] = useState(true);
 
   const typeStyles = {
     success: {
-      bg: "bg-green-50",
-      text: "text-green-800",
-      border: "border-l-4 border-green-400",
-      icon: <AiOutlineCheckCircle className="h-6 w-6" />,
-      progress: "bg-green-400",
+      icon: <AiOutlineCheckCircle className="h-5 w-5 text-green-600" />,
+      progress: "bg-green-500",
     },
     error: {
-      bg: "bg-red-50",
-      text: "text-red-800",
-      border: "border-l-4 border-red-400",
-      icon: <AiOutlineCloseCircle className="h-6 w-6" />,
-      progress: "bg-red-400",
+      icon: <AiOutlineCloseCircle className="h-5 w-5 text-red-600" />,
+      progress: "bg-red-500",
     },
     info: {
-      bg: "bg-blue-50",
-      text: "text-blue-800",
-      border: "border-l-4 border-blue-400",
-      icon: <AiOutlineInfoCircle className="h-6 w-6" />,
-      progress: "bg-blue-400",
+      icon: <AiOutlineInfoCircle className="h-5 w-5 text-blue-600" />,
+      progress: "bg-blue-500",
     },
   };
 
@@ -43,7 +35,7 @@ const Notification = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-      setTimeout(onClose, 300); // wait for fade out
+      setTimeout(onClose, 300);
     }, duration);
 
     return () => clearTimeout(timer);
@@ -51,29 +43,45 @@ const Notification = ({
 
   return (
     <div
-      className={`fixed bottom-5 right-5 w-[280px] overflow-hidden z-50 rounded-xl shadow-xl transform transition-all duration-300 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
+      className={`fixed right-5 sm:right-8 z-50 w-[300px] max-w-full transition-all duration-300 transform
+        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}
+      `}
+      style={{ bottom: `${5 + index * 80}px` }} // stack notifications
     >
-      <div
-        className={`flex items-center p-4 space-x-3 ${styles.bg} ${styles.text} ${styles.border}`}
-      >
-        <div className="flex-shrink-0">{styles.icon}</div>
-        <div className="flex-1 text-sm font-medium">{message}</div>
-        <button
-          onClick={onClose}
-          className="ml-3 text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <AiOutlineClose className="h-5 w-5" />
-        </button>
-      </div>
-      {/* Smooth progress bar */}
-      <div className="h-1 w-full bg-gray-200 relative">
+      <div className="relative flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
+        {/* Progress bar inside the notification */}
         <div
-          className={`${styles.progress} absolute top-0 left-0 h-1 transition-all duration-[4000ms] ease-linear`}
-          style={{ width: visible ? "100%" : "0%" }}
+          className={`${styles.progress} h-1 w-full absolute top-0 left-0`}
+          style={{
+            animation: `progressAnimation ${duration}ms linear forwards`,
+          }}
         />
+
+        <div className="flex items-center p-3 space-x-3">
+          {/* Icon */}
+          <div className="flex-shrink-0">{styles.icon}</div>
+
+          {/* Message */}
+          <div className="flex-1 text-sm text-gray-800">{message}</div>
+
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <AiOutlineClose className="h-4 w-4" />
+          </button>
+        </div>
       </div>
+
+      <style>
+        {`
+          @keyframes progressAnimation {
+            from { width: 100%; }
+            to { width: 0%; }
+          }
+        `}
+      </style>
     </div>
   );
 };

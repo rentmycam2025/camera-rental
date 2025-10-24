@@ -6,6 +6,7 @@ import {
   Route,
   useNavigate,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 
 // Hooks
@@ -67,7 +68,10 @@ function AppContent() {
   const handleViewDetail = useCallback(
     (item) => {
       // Generate URL-friendly slug
-      const slug = item.name.toLowerCase().replace(/\s+/g, "-");
+      const slug = item.name
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
       navigate(`/product/${slug}`);
       setSelectedItem(item);
       setActivePage("detail");
@@ -78,14 +82,14 @@ function AppContent() {
   // Handler for search selection
   const handleSearchSelect = useCallback(
     (item) => {
-      const slug = item.name.toLowerCase().replace(/\s+/g, "-");
+      // Generate URL-friendly slug
+      const slug = item.name
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
       navigate(`/product/${slug}`);
       setSelectedItem(item);
       setActivePage("detail");
-      setNotification({
-        message: `Navigating to ${item.name}`,
-        type: "success",
-      });
     },
     [navigate]
   );
@@ -246,6 +250,7 @@ function AppContent() {
             />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </main>
